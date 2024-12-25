@@ -1,0 +1,126 @@
+/* General body styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+/* Home container setup */
+.home-container {
+display: flex;
+flex-direction: column;
+align-items: center;
+background-color: #ffffff;
+height: 100vh;
+}
+
+/* Main content styling */
+.home-content {
+display: flex;
+justify-content: space-between;
+align-items: center;
+width: 100%;
+max-width: 1200px;
+margin-top: 20px;
+border: 2px solid #000; /* Outer border */
+padding: 20px;
+background-color: #ffffff;
+}
+
+/* Left section styles */
+.home-left {
+max-width: 50%;
+padding: 20px;
+font-family: 'Arial', sans-serif;
+line-height: 1.5;
+}
+
+.home-left h2 {
+font-size: 2rem;
+margin-bottom: 10px;
+color: #000;
+}
+
+.home-left h3 {
+font-size: 2rem;
+margin-bottom: 15px;
+color: #444;
+}
+
+/* Button styling */
+.get-started {
+background-color: #1d3bcf;
+color: white;
+padding: 10px 20px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-size: 1.5rem;
+margin-top: 20px;
+}
+
+.get-started:hover {
+background-color: darkorange;
+}
+
+/* Right section (image) */
+.home-right img {
+max-width: 400px;
+height: auto;
+}
+
+/* Additional layout and feature section styles */
+.home-why-urban-container {
+  display: flex;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Left section for the 'Why Urban Company?' content */
+.home-why-urban-left {
+  flex: 2;
+  padding: 20px;
+}
+
+.home-why-urban-right {
+  flex: 1;
+  background-color: #e1f5fe;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.home-why-urban-left h1 {
+  font-size: 2em;
+}
+
+.home-why-urban-feature {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.home-why-urban-feature img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.home-why-urban-h3 {
+  margin: 0;
+}
+
+.home-why-urban-h2 {
+  font-size: 1.5em;
+}
+
+/* Quality assured section styles */
+.home-why-urban-quality-assured {
+  text-align: center;
+}
+
+.home-why-urban-security-icon {
+  width: 200px; /* Adjust size as needed */
+  height: 200px; /* Adjust size as needed */
+  display: block;
+  margin: 0 auto 10px; /* Center the icon and add spacing */
+}
