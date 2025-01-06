@@ -3,6 +3,8 @@ import './Home.css';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Shared/Header';
 import Footer from '../Shared/Footer';
+import Cleaning from '../../assets/images/Cleaning.jpg'
+import Repair from '../../assets/images/Handyman.jpg'
 
 function Home() {
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ function Home() {
           <p>Your trusted partner for all home service needs.</p>
           <div className="hero-buttons">
             <button onClick={() => navigate('/services')} className="explore-btn">Explore Services</button>
-            <button onClick={() => navigate('/work-with-us')} className="work-btn">Work with us</button>
+            <button onClick={() => navigate('/workwithus')} className="work-btn">Work with us</button>
           </div>
         </div>
       </div>
@@ -29,18 +31,23 @@ function Home() {
         </p>
         <div className="services-container">
           <div className="service-card">
-            <img src="cleaning.jpg" alt="Cleaning Services" />
+            <img src={Cleaning} alt="Cleaning Services" />
             <h3>Cleaning</h3>
-            <p>Professional cleaning services to keep your home spotless and fresh.</p>
-            <button onClick={() => navigate('/services/cleaning')} className="service-btn">Try now</button>
-            <button className="service-btn-alt">Learn more</button>
+            <p>Professional cleaning services to keep your home spotless fresh.</p>
+            <div className='services-btn-group'>
+              <button onClick={() => navigate('/services/cleaning')} className="service-btn">Try now</button>
+              <button className="service-btn-alt">Learn more</button>
+            </div>
           </div>
           <div className="service-card">
-            <img src="repairs.jpg" alt="Repair Services" />
+            <img src={Repair} alt="Repair Services" />
             <h3>Repairs</h3>
             <p>Reliable repair services for any household issues, ensuring everything works smoothly.</p>
-            <button onClick={() => navigate('/services/repairs')} className="service-btn">Try now</button>
-            <button className="service-btn-alt">Learn more</button>
+            <div className='services-btn-group'>
+              <button onClick={() => navigate('/services/repairs')} className="service-btn">Try now</button>
+              <button className="service-btn-alt">Learn more</button>
+            </div>
+
           </div>
         </div>
         <button onClick={() => navigate('/services')} className="more-services-btn">More Services</button>
