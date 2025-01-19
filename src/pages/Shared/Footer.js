@@ -1,6 +1,5 @@
 import React from 'react';
 import './Footer.css';
-//import logo from '../../assets/images/logo.png'; 
 
 function Footer() {
   return (
@@ -28,12 +27,6 @@ function Footer() {
             <p>About us</p>
             <p>Contact us</p>
             <p>Work with us</p>
-          </div>
-          <div className="footer-column">
-            <h4>Plans & Pricing</h4>
-            <p>Personal - One day</p>
-            <p>Personal - Monthly</p>
-            <p>Organization</p>
           </div>
         </div>
       </div>

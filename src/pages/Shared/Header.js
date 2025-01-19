@@ -20,7 +20,7 @@ function Header() {
       <div className="header-nav">
         <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>Home</NavLink>
         <NavLink to="/services" className={({ isActive }) => (isActive ? 'active' : '')}>Services</NavLink>
-        <NavLink to="/bookings" className={({ isActive }) => (isActive ? 'active' : '')}>Bookings</NavLink>
+        <NavLink to="/aboutus" className={({ isActive }) => (isActive ? 'active' : '')}>About Us</NavLink>
       </div>
       )}
       <div className="header-buttons">
