@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import './Footer.css';
 
 function Footer() {
@@ -12,21 +13,21 @@ function Footer() {
         <div className="footer-columns">
           <div className="footer-column">
             <h4>Services</h4>
-            <p>Cleaning</p>
-            <p>Repairs</p>
-            <p>Others</p>
+            <NavLink to="/services">Cleaning</NavLink>
+            <NavLink to="/services">Repairs</NavLink>
+            <NavLink to="/services">Others</NavLink>
           </div>
           <div className="footer-column">
             <h4>Resources</h4>
-            <p>Blog</p>
-            <p>User Guides</p>
-            <p>Offers</p>
+            <NavLink to="/blog">Blog</NavLink>
+            <NavLink to="/user-guides">User Guides</NavLink>
+            <NavLink to="/offers">Offers</NavLink>
           </div>
           <div className="footer-column">
             <h4>Company</h4>
-            <p>About us</p>
-            <p>Contact us</p>
-            <p>Work with us</p>
+            <NavLink to="/aboutus">About us</NavLink>
+            <NavLink to="/contactus">Contact us</NavLink>
+            <NavLink to="/workwithus">Work with us</NavLink>
           </div>
         </div>
       </div>
