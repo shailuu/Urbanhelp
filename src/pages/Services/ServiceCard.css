@@ -1,6 +1,7 @@
-.btn-rates{
+.btn-rates {
     background-color: #fff;
     border: 1px solid #6a6eff;
     color: #6a6eff;
     border-radius: 10px;
+    margin: 10px; /* Add margin to create space around the button */
 }

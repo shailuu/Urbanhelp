@@ -64,8 +64,10 @@
 }
 
 .services-section h2 {
-  font-size: 2rem;
+  font-size: 3rem;
   margin-bottom: 10px;
+  font-weight: bold;
+  color: #575be6;
 }
 
 .services-section p {
@@ -164,6 +166,91 @@
 .more-services-btn:hover {
   background-color: #575be6;
 }
+
+.why-urban-help {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  gap: 40px;
+}
+
+.why-left {
+  flex: 1;
+  max-width: 50%;
+  margin-left: 120px; 
+}
+
+.why-left h2 {
+  font-size: 50px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: left;
+  color: #6a6eff;
+}
+
+.feature {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.feature img {
+  width: 60px;
+  height: 60px;
+  margin-right: 20px;
+}
+
+.feature h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.feature p {
+  margin: 8px 0 0;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.why-right {
+  flex: 0.8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quality-box {
+  text-align: center;
+  background-color: #f1f8ff;
+  padding: 40px;
+  border-radius: 12px;
+  max-width: 80%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.quality-box img {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.quality-box h3 {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.quality-box p {
+  font-size: 16px;
+  color: #666;
+  margin-top: 15px;
+  line-height: 1.6;
+}
+
 
 
 .testimonial-section {

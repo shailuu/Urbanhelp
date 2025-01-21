@@ -3,14 +3,18 @@ import './Home.css';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Shared/Header';
 import Footer from '../Shared/Footer';
-import Cleaning from '../../assets/images/Cleaning.jpg'
-import Repair from '../../assets/images/Handyman.jpg'
+import Cleaning from '../../assets/images/Cleaning.jpg';
+import Repair from '../../assets/images/Handyman.jpg';
+import Gardener from '../../assets/images/Gardener.jpg'; 
+import Bill from '../../assets/images/bill.png';
+import Expert from '../../assets/images/expert.png';
+import Equipment from '../../assets/images/equipment.png'; 
+import QA from '../../assets/images/QA.png'; 
 
 function Home() {
   const navigate = useNavigate();
 
   return (
-    
     <div className="home-page">
       <Header />
       <div className="hero-section">
@@ -47,11 +51,57 @@ function Home() {
               <button onClick={() => navigate('/services/repairs')} className="service-btn">Try now</button>
               <button className="service-btn-alt">Learn more</button>
             </div>
-
+          </div>
+          <div className="service-card">
+            <img src={Gardener} alt="Gardening Services" />
+            <h3>Gardener</h3>
+            <p>Create and maintain a beautiful garden with expert landscaping and gardening services.</p>
+            <div className='services-btn-group'>
+              <button onClick={() => navigate('/services/gardener')} className="service-btn">Try now</button>
+              <button className="service-btn-alt">Learn more</button>
+            </div>
           </div>
         </div>
         <button onClick={() => navigate('/services')} className="more-services-btn">More Services</button>
       </section>
+
+      
+      <section className="why-urbanhelp-section">
+      <div className="why-urban-help">
+      <div className="why-left">
+        <h2>Why Urban Help?</h2>
+        <div className="feature">
+        <img src={Bill} alt="Transparent Pricing" />
+          <div>
+            <h3>Transparent pricing</h3>
+            <p>See fixed prices before you book. No hidden charges.</p>
+          </div>
+        </div>
+        <div className="feature">
+        <img src={Expert} alt="Experts" />
+          <div>
+            <h3>Experts only</h3>
+            <p>Our professionals are well trained and have on-job expertise.</p>
+          </div>
+        </div>
+        <div className="feature">
+        <img src={Equipment} alt="Repair Services" />
+          <div>
+            <h3>Fully equipped</h3>
+            <p>We bring everything needed to get the job done well.</p>
+          </div>
+        </div>
+      </div>
+      <div className="why-right">
+        <div className="quality-box">
+        <img src={QA} alt="Quality Assured" />
+          <h3>100% Quality Assured</h3>
+          <p>If you don’t love our service, we will make it right.</p>
+        </div>
+      </div>
+    </div>
+    </section>
+
 
       <section className="testimonial-section">
         <div className="testimonial-card">

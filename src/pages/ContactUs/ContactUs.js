@@ -7,9 +7,9 @@ function ContactUs() {
   return (
     <div className='contact-us'>
       <Header />
-      <div className="container">
+      <div className="contact-container">
         <header>
-          <h1>Contact Us</h1>
+          <h1><b>Contact Us</b></h1>
           <p>Please fill out the form below to get in touch with us. We look forward to hearing from you!</p>
         </header>
         <form>
