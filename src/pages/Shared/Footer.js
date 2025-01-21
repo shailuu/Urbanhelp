@@ -1,13 +1,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './Footer.css';
+import Logo from '../../assets/images/logomain.png'; 
 
 function Footer() {
   return (
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-left">
-          <img src="/path/to/logo.png" alt="Logo" className="footer-logo" />
+          <img src={Logo} alt="Logo" className="footer-logo" />
           <p>Copyright 2025 © All Rights Reserved</p>
           <p>Contact us: 9810486660</p>
           <p>Email Us: UrbanHelp@customerservice.np</p>
