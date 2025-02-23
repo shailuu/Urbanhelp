@@ -7,7 +7,8 @@ import Workwithus from '../pages/Workwithus/Workwithus';
 import Services from '../pages/Services/Services'
 import AboutUs from '../pages/AboutUs/AboutUs';
 import ContactUs from '../pages/ContactUs/ContactUs';
-
+import Profile from '../pages/Profile/Profile';
+import Bookings from '../pages/Bookings/Bookings';
 function AppRoutes() {
   return (
     <Router>
@@ -19,6 +20,8 @@ function AppRoutes() {
         <Route path="/services" element={<Services />} />
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/contactus" element={<ContactUs />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path='/booking' element={<Bookings/>} />
       </Routes>
     </Router>
   );

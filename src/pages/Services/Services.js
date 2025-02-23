@@ -25,6 +25,8 @@ function Services() {
   return (
     <div className="service-page">
       <Header />
+      <div className="service-container">
+    
       <div className="search-section">
         <h1>Service Selection</h1>
         <div className="search-group">
@@ -38,6 +40,7 @@ function Services() {
         {services.map((service, index) => (
           <ServiceCard key={index} {...service} />
         ))}
+      </div>
       </div>
       <section className="booking-section">
         <h2><b>Book Your Service</b></h2>

@@ -17,23 +17,16 @@ function ContactUs() {
             <h2>Contact Information</h2>
             <div className="form-group">
               <label htmlFor="name">Name</label>
-              <input type="text" id="name" placeholder="John Doe" />
+              <input type="text" id="name" placeholder="Enter your name" />
             </div>
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input type="email" id="email" placeholder="Email address" />
             </div>
-            <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
-              <input type="tel" id="phone" placeholder="(123) 456 - 7890" />
-            </div>
+           
           </div>
           <div className="section">
             <h2>Message</h2>
-            <div className="form-group">
-              <label htmlFor="subject">Subject</label>
-              <input type="text" id="subject" placeholder="Subject" />
-            </div>
             <div className="form-group">
               <label htmlFor="message">Message</label>
               <textarea id="message" placeholder="Type your message here..."></textarea>

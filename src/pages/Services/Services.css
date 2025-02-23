@@ -1,6 +1,13 @@
 .service-page {
   padding-top: 5%;
 }
+.service-container{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem;
+  margin-bottom: 5rem; /* Add margin at the bottom */
+  background-color:white;
+}
 
 .search-section {
   position: relative; /* Change to relative to avoid overlap */

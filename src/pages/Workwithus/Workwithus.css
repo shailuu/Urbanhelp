@@ -6,6 +6,14 @@ body {
     color: #333;
 }
 
+.work-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 3rem;
+    margin-bottom: 5rem; /* Add margin at the bottom */
+    background-color:white;
+}
+
 .work-with-us{
     margin-top: 8%;
 }
@@ -87,7 +95,7 @@ header p {
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 label {
@@ -112,31 +120,28 @@ textarea {
     height: 60px;
 }
 
-.qualifications {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.qualifications label {
-    display: inline-block;
-    background-color: #f1f1f1;
-    padding: 10px 15px;
+.service-dropdown {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #007bff;
     border-radius: 5px;
+    background-color: #f9f9f9;
+    color: #333;
     cursor: pointer;
-    border: 1px solid #ddd;
-    transition: background-color 0.3s, border 0.3s;
-}
-
-.qualifications input {
-    display: none;
-}
-
-.qualifications input:checked + label {
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
-}
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  .service-dropdown:hover {
+    border-color: #0056b3;
+  }
+  
+  .service-dropdown:focus {
+    border-color: #004085;
+    box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+  }
+  
 
 
 .work-with-us-btn{
