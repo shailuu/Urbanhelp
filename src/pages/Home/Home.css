@@ -10,13 +10,13 @@
   text-align: center;
   background-size: cover;
   background-position: center;
-  height: 100vh; 
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white; 
+  color: white;
 }
-  
+
 .hero-content h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
@@ -49,7 +49,7 @@
 }
 
 .work-btn:hover {
-  background-color:#b4b9f8 ;
+  background-color: #b4b9f8;
   color: #fff;
   border: 1px solid #fff;
 }
@@ -123,33 +123,29 @@
   flex-grow: 1;
 }
 
-.service-actions {
+.services-btn-group {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  margin-top: 1rem;
   padding: 0 20px 20px;
 }
 
-.service-btn,
-.service-btn-alt {
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-}
-
 .service-btn {
-  background-color: #6a6eff;
-  color: white;
+  background-color: #fff; /* White background */
+  border: 1px solid #6a6eff; /* Border color */
+  color: #6a6eff; /* Text color */
+  border-radius: 10px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for better spacing */
+  font-size: 1rem; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+  margin: 10px; /* Add margin to create space around the button */
 }
 
-.service-btn-alt {
-  background-color: #fff;
-  color: #6a6eff;
-}
-
-.service-btn:hover{
-  background-color:#575be6 ;
+.service-btn:hover {
+  background-color: #6a6eff; /* Change background color on hover */
+  color: #fff; /* Change text color on hover */
+  border-color: #6a6eff; /* Change border color on hover */
 }
 
 .more-services-btn {
@@ -180,7 +176,7 @@
 .why-left {
   flex: 1;
   max-width: 50%;
-  margin-left: 120px; 
+  margin-left: 120px;
 }
 
 .why-left h2 {
@@ -250,8 +246,6 @@
   margin-top: 15px;
   line-height: 1.6;
 }
-
-
 
 .testimonial-section {
   background-color: #f9f9f9;

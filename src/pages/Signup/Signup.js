@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 import Footer from '../Shared/Footer';
 import Header from '../Shared/Header';
@@ -12,9 +12,11 @@ function Signup() {
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const { username, email, password } = formData;
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,25 +24,28 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const userData = { username, email, password };
-
+    setLoading(true);
+    setError(null);
+    
     try {
-      const response = await fetch('http://localhost:5000/api/users/register', {
+      const response = await fetch('http://localhost:5001/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await response.json();
+      
       if (!response.ok) {
         throw new Error(data.message || 'Registration failed');
       }
-
+      
       alert('User registered successfully!');
-      navigate('/login'); // Redirect to login page after clicking "OK"
+      navigate('/login'); // Redirect after successful registration
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,7 +54,8 @@ function Signup() {
       <Header />
       <div className="signup-container">
         <h1>Create Your Account</h1>
-         <p>Use our services now!</p>
+        <p>Use our services now!</p>
+        {error && <p className="error-message">{error}</p>}
         <form className="signup-form" onSubmit={handleSubmit}>
           <div className="input-group">
             <FontAwesomeIcon icon={faUser} className="input-icon" />
@@ -85,7 +91,9 @@ function Signup() {
             />
           </div>
           <div className="form-actions">
-            <button type="submit" className="signup-btn signuppage-signup-btn">Sign Up</button>
+            <button type="submit" className="signup-btn signuppage-signup-btn" disabled={loading}>
+              {loading ? 'Signing Up...' : 'Sign Up'}
+            </button>
           </div>
         </form>
         <p>

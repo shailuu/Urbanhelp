@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext} from 'react';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Shared/Header';
@@ -10,16 +10,18 @@ import Bill from '../../assets/images/bill.png';
 import Expert from '../../assets/images/expert.png';
 import Equipment from '../../assets/images/equipment.png'; 
 import QA from '../../assets/images/QA.png'; 
+import { AuthContext } from '../../context/AuthContext';
 
 function Home() {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useContext(AuthContext);
 
   return (
     <div className="home-page">
       <Header />
       <div className="hero-section">
         <div className="hero-content">
-          <h1>Welcome to UrbanHelp</h1>
+          <h1>Welcome {isAuthenticated ? user?.username || 'User' : 'to UrbanHelp'}</h1>
           <p>Your trusted partner for all home service needs.</p>
           <div className="hero-buttons">
             <button onClick={() => navigate('/services')} className="explore-btn">Explore Services</button>
@@ -40,7 +42,7 @@ function Home() {
             <p>Professional cleaning services to keep your home spotless fresh.</p>
             <div className='services-btn-group'>
               <button onClick={() => navigate('/services/cleaning')} className="service-btn">Try now</button>
-              <button className="service-btn-alt">Learn more</button>
+              
             </div>
           </div>
           <div className="service-card">
@@ -49,7 +51,7 @@ function Home() {
             <p>Reliable repair services for any household issues, ensuring everything works smoothly.</p>
             <div className='services-btn-group'>
               <button onClick={() => navigate('/services/repairs')} className="service-btn">Try now</button>
-              <button className="service-btn-alt">Learn more</button>
+              
             </div>
           </div>
           <div className="service-card">

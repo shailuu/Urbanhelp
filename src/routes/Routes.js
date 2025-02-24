@@ -14,8 +14,8 @@ function AppRoutes() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} /> */}
         <Route path="/workwithus" element={<Workwithus />} />
         <Route path="/services" element={<Services />} />
         <Route path="/aboutus" element={<AboutUs />} />

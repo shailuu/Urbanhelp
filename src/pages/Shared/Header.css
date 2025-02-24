@@ -62,16 +62,17 @@
 
 .header-buttons {
   display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
 .login-btn,
 .signup-btn {
-  padding: 8px 15px;
-  font-size: 1rem;
+  padding: 6px 12px; /* Reduced padding */
+  font-size: 0.9rem; /* Reduced font size */
   border-radius: 5px;
   border: none;
   cursor: pointer;
+  white-space: nowrap; /* Prevents text from breaking into two lines */
 }
 
 .login-btn {
