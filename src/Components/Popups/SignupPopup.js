@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignupPopup.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
-import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
 function SignupPopup({ onClose }) {
@@ -14,36 +13,33 @@ function SignupPopup({ onClose }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { setIsAuthenticated } = useContext(AuthContext); // Access context to update authentication state
+  const { login } = useContext(AuthContext); // Use login function
   const { username, email, password } = formData;
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
       const response = await fetch("http://localhost:5001/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
       });
-
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
       }
-
       alert("User registered successfully!");
-      setIsAuthenticated(true); // Set authenticated state after successful signup
-      onClose(); // Close the popup after success
-      navigate("/"); // Redirect to homepage
+      login(); // Use login function
+      onClose();
+      navigate("/");
     } catch (error) {
       setError(error.message);
     } finally {

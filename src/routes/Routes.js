@@ -22,6 +22,8 @@ function AppRoutes() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/profile" element={<Profile />} />
         <Route path='/booking' element={<Bookings/>} />
+        {/* <Route path="/login" element={<LoginPopup onClose={() => {}} />} />
+        <Route path="/signup" element={<SignupPopup onClose={() => {}} />} /> */}
       </Routes>
     </Router>
   );

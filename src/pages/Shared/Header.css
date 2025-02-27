@@ -1,3 +1,4 @@
+/* Header container */
 .header {
   display: flex;
   justify-content: space-between;
@@ -11,6 +12,7 @@
   z-index: 1000;
 }
 
+/* Logo styling */
 .header-logo {
   display: flex;
   align-items: center;
@@ -28,6 +30,7 @@
   color: #333;
 }
 
+/* Navigation links */
 .header-nav {
   display: flex;
   gap: 30px;
@@ -38,6 +41,7 @@
   color: #666;
   text-decoration: none;
   position: relative;
+  transition: all 0.3s ease; /* Smooth transitions */
 }
 
 .header-nav a:hover {
@@ -60,11 +64,14 @@
   border-radius: 2px;
 }
 
+/* Header buttons */
 .header-buttons {
   display: flex;
   gap: 15px;
+  align-items: center; /* Align buttons vertically */
 }
 
+/* Login and Signup buttons */
 .login-btn,
 .signup-btn {
   padding: 6px 12px; /* Reduced padding */
@@ -73,6 +80,7 @@
   border: none;
   cursor: pointer;
   white-space: nowrap; /* Prevents text from breaking into two lines */
+  transition: all 0.3s ease; /* Smooth transitions */
 }
 
 .login-btn {
@@ -92,4 +100,36 @@
 
 .signup-btn:hover {
   background-color: #575be6;
+}
+
+/* Icon buttons (Notifications, Profile, Logout) */
+.icon-btn {
+  background-color: #dcdffe; /* Match the login button's style */
+  color: #1d3bcf;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 12px; /* Consistent padding */
+  font-size: 0.9rem; /* Consistent font size */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transitions */
+}
+
+.icon-btn:hover {
+  background-color: #b4b9f8; /* Hover effect */
+  color: white;
+}
+
+.logout-btn {
+  background-color: #ff6b6b; /* Red color for logout */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 12px; /* Consistent padding */
+  font-size: 0.9rem; /* Consistent font size */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transitions */
+}
+
+.logout-btn:hover {
+  background-color: #ff4d4d; /* Darker red on hover */
 }

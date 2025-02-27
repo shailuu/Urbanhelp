@@ -1,26 +1,57 @@
-import React, { useState } from 'react';
-import './LoginPopup.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import "./LoginPopup.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from "../../context/AuthContext";
 
-function LoginPopup({ closePopup }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function LoginPopup({ onClose }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleEmailChange = (e) => setEmail(e.target.value);
+  const handlePasswordChange = (e) => setPassword(e.target.value);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here (e.g., API call, form validation)
-    console.log('Logging in with:', email, password);
-    // Close the popup after login (optional)
-    closePopup();
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("http://localhost:5001/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+      console.log("API Response:", data); // Debugging line
+      alert("Logged in successfully!");
+      login(); // Update authentication state
+      onClose(); // Close the popup
+      navigate("/"); // Redirect to the homepage
+    } catch (error) {
+      console.error("Login Error:", error.message); // Debugging line
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="popup-overlay">
       <div className="popup-content">
-        <button className="close-btn" onClick={closePopup}>×</button>
+        <button className="close-btn" onClick={onClose}>
+          &times;
+        </button>
         <h1>Login</h1>
         <p>Log in to your account</p>
+        {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleSubmit} className="login-form">
           <div className="input-group">
             <span className="input-icon">
@@ -31,7 +62,7 @@ function LoginPopup({ closePopup }) {
               placeholder="Your email address"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
             />
           </div>
           <div className="input-group">
@@ -43,11 +74,13 @@ function LoginPopup({ closePopup }) {
               placeholder="Enter your password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
             />
           </div>
           <div className="form-actions">
-            <button type="submit" className="login-btn">Login</button>
+            <button type="submit" className="login-btn" disabled={loading}>
+              {loading ? "Logging In..." : "Login"}
+            </button>
           </div>
         </form>
       </div>
