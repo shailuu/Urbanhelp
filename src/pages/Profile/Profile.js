@@ -4,13 +4,14 @@ import Footer from '../Shared/Footer';
 import "./Profile.css";
 
 function Profile() {
+  // Updated state: Replaced 'surname' with 'dob'
   const [formData, setFormData] = useState({
     firstName: "",
-    surname: "",
-    gender: "Male",
+    dob: "", // Date of Birth
+    gender: "",
     city: "",
     phoneNumber: "",
-    address: "GMT"
+    address: ""
   });
 
   const handleInputChange = (e) => {
@@ -23,11 +24,14 @@ function Profile() {
 
   return (
     <div className="profile-page">
+      {/* Header */}
       <Header />
+
+      {/* Profile Content */}
       <div className="profile-container">
         <h1 className="welcome-text">Welcome, John Smith</h1>
-        <p className="date">Feb 07 2024 2022</p>
-        
+
+        {/* Profile Header */}
         <div className="profile-header">
           <div className="profile-image-container">
             <img 
@@ -43,64 +47,57 @@ function Profile() {
           <button className="edit-button">Edit</button>
         </div>
 
+        {/* Form Grid */}
         <div className="form-grid">
           <div className="form-group">
-            <label>First Name</label>
+            <label>Name</label>
             <input 
               type="text" 
               name="firstName"
               value={formData.firstName}
               onChange={handleInputChange}
-              placeholder="Enter your first name" 
+              placeholder="Enter your name" 
               className="form-input" 
             />
           </div>
-          
           <div className="form-group">
-            <label>Surname</label>
+            <label>Date of Birth</label>
             <input 
-              type="text" 
-              name="surname"
-              value={formData.surname}
+              type="date" 
+              name="dob"
+              value={formData.dob}
               onChange={handleInputChange}
-              placeholder="Enter your surname" 
               className="form-input" 
             />
           </div>
-          
           <div className="form-group">
             <label>Gender</label>
-            <div className="select-wrapper">
-              <select 
-                name="gender"
-                value={formData.gender}
-                onChange={handleInputChange}
-                className="form-input"
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
+            <select 
+              name="gender"
+              value={formData.gender}
+              onChange={handleInputChange}
+              className="form-input"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
-          
           <div className="form-group">
             <label>City</label>
-            <div className="select-wrapper">
-              <select 
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                className="form-input"
-              >
-                <option value="">Select a city</option>
-                <option value="kathmandu">Kathmandu</option>
-                <option value="lalitpur">Lalitpur</option>
-                <option value="bhaktapur">Bhaktapur</option>
-              </select>
-            </div>
+            <select 
+              name="city"
+              value={formData.city}
+              onChange={handleInputChange}
+              className="form-input"
+            >
+              <option value="">Select a city</option>
+              <option value="Kathmandu">Kathmandu</option>
+              <option value="Lalitpur">Lalitpur</option>
+              <option value="Bhaktapur">Bhaktapur</option>
+            </select>
           </div>
-          
           <div className="form-group">
             <label>Phone Number</label>
             <input 
@@ -113,24 +110,22 @@ function Profile() {
               pattern="[0-9]*" 
             />
           </div>
-          
           <div className="form-group">
             <label>Address</label>
-            <div className="select-wrapper">
-              <select 
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                className="form-input"
-              >
-                <option value="GMT">GMT</option>
-              </select>
-            </div>
+            <input 
+              type="text" 
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+              placeholder="Enter your address" 
+              className="form-input"
+            />
           </div>
         </div>
 
+        {/* Email Section */}
         <div className="email-section">
-          <h2>My email Address</h2>
+          <h2>My Email Address</h2>
           <div className="email-entry">
             <div className="email-dot"></div>
             <div className="email-details">
@@ -141,6 +136,8 @@ function Profile() {
           <button className="add-email-button">+ Add Email Address</button>
         </div>
       </div>
+
+      {/* Footer */}
       <Footer />
     </div>
   );

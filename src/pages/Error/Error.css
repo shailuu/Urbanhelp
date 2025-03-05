@@ -1,0 +1,73 @@
+/* Error Page Container */
+.error {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background:  #6a6eff;
+    color: white;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* 404 Text */
+  .error-h1 {
+    font-size: 120px;
+    font-weight: bold;
+    margin: 0;
+    letter-spacing: 5px;
+    animation: bounce 1.5s infinite alternate;
+  }
+  
+  /* Error Message */
+  p {
+    font-size: 22px;
+    margin-top: 10px;
+    color: #fff;
+  }
+  
+  /* Buttons */
+  .home-link,
+  .contact-link {
+    display: inline-block;
+    margin: 15px;
+    padding: 12px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: white;
+    color: #007bff ;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Different color for Contact Button */
+  .contact-link {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  /* Hover Effects */
+  .home-link:hover {
+    background-color: #ff4d4d;
+    color: white;
+    transform: scale(1.1);
+  }
+  
+  .contact-link:hover {
+    background-color: #1e7e34;
+    transform: scale(1.1);
+  }
+  
+  /* Simple Bounce Animation */
+  @keyframes bounce {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-10px);
+    }
+  }
+  

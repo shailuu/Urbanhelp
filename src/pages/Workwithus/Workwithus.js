@@ -8,10 +8,8 @@ function Workwithus() {
     <div className='work-with-us'>
       <Header />
       <div className="work-container">
-        <header>
           <h1>Apply to Work</h1>
           <p>Please fill the form below to receive a call from us. Feel free to add as much detail as needed.</p>
-        </header>
         <form>
           <div className="section">
             <h2>Contact details</h2>

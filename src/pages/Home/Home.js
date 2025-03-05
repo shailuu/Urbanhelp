@@ -1,20 +1,29 @@
-import React, { useContext} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Shared/Header';
 import Footer from '../Shared/Footer';
-import Cleaning from '../../assets/images/Cleaning.jpg';
-import Repair from '../../assets/images/Handyman.jpg';
-import Gardener from '../../assets/images/Gardener.jpg'; 
+import ServiceCard from '../Services/ServiceCard';
 import Bill from '../../assets/images/bill.png';
 import Expert from '../../assets/images/expert.png';
-import Equipment from '../../assets/images/equipment.png'; 
-import QA from '../../assets/images/QA.png'; 
+import Equipment from '../../assets/images/equipment.png';
+import QA from '../../assets/images/QA.png';
 import { AuthContext } from '../../context/AuthContext';
 
 function Home() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useContext(AuthContext);
+
+  // State to store the top 3 services
+  const [topServices, setTopServices] = useState([]);
+
+  // Fetch the top 3 services on component mount
+  useEffect(() => {
+    fetch("http://localhost:5001/api/services") // Fetch all services
+      .then((response) => response.json())
+      .then((data) => setTopServices(data.slice(0, 3))) // Limit to the first 3 items
+      .catch((error) => console.error("Error fetching top services:", error));
+  }, []);
 
   return (
     <div className="home-page">
@@ -36,74 +45,53 @@ function Home() {
           Explore a variety of household services tailored to make your life easier. From cleaning to repairs, UrbanHelp has you covered.
         </p>
         <div className="services-container">
-          <div className="service-card">
-            <img src={Cleaning} alt="Cleaning Services" />
-            <h3>Cleaning</h3>
-            <p>Professional cleaning services to keep your home spotless fresh.</p>
-            <div className='services-btn-group'>
-              <button onClick={() => navigate('/services/cleaning')} className="service-btn">Try now</button>
-              
-            </div>
-          </div>
-          <div className="service-card">
-            <img src={Repair} alt="Repair Services" />
-            <h3>Repairs</h3>
-            <p>Reliable repair services for any household issues, ensuring everything works smoothly.</p>
-            <div className='services-btn-group'>
-              <button onClick={() => navigate('/services/repairs')} className="service-btn">Try now</button>
-              
-            </div>
-          </div>
-          <div className="service-card">
-            <img src={Gardener} alt="Gardening Services" />
-            <h3>Gardener</h3>
-            <p>Create and maintain a beautiful garden with expert landscaping and gardening services.</p>
-            <div className='services-btn-group'>
-              <button onClick={() => navigate('/services/gardener')} className="service-btn">Try now</button>
-              <button className="service-btn-alt">Learn more</button>
-            </div>
-          </div>
+          {/* Dynamically render the top 3 services */}
+          {Array.isArray(topServices) && topServices.length > 0 ? (
+            topServices.map((service, index) => (
+              <ServiceCard key={index} {...service} />
+            ))
+          ) : (
+            <p>No services available.</p>
+          )}
         </div>
         <button onClick={() => navigate('/services')} className="more-services-btn">More Services</button>
       </section>
 
-      
       <section className="why-urbanhelp-section">
-      <div className="why-urban-help">
-      <div className="why-left">
-        <h2>Why Urban Help?</h2>
-        <div className="feature">
-        <img src={Bill} alt="Transparent Pricing" />
-          <div>
-            <h3>Transparent pricing</h3>
-            <p>See fixed prices before you book. No hidden charges.</p>
+        <div className="why-urban-help">
+          <div className="why-left">
+            <h2>Why Urban Help?</h2>
+            <div className="feature">
+              <img src={Bill} alt="Transparent Pricing" />
+              <div>
+                <h3>Transparent pricing</h3>
+                <p>See fixed prices before you book. No hidden charges.</p>
+              </div>
+            </div>
+            <div className="feature">
+              <img src={Expert} alt="Experts" />
+              <div>
+                <h3>Experts only</h3>
+                <p>Our professionals are well trained and have on-job expertise.</p>
+              </div>
+            </div>
+            <div className="feature">
+              <img src={Equipment} alt="Repair Services" />
+              <div>
+                <h3>Fully equipped</h3>
+                <p>We bring everything needed to get the job done well.</p>
+              </div>
+            </div>
+          </div>
+          <div className="why-right">
+            <div className="quality-box">
+              <img src={QA} alt="Quality Assured" />
+              <h3>100% Quality Assured</h3>
+              <p>If you don’t love our service, we will make it right.</p>
+            </div>
           </div>
         </div>
-        <div className="feature">
-        <img src={Expert} alt="Experts" />
-          <div>
-            <h3>Experts only</h3>
-            <p>Our professionals are well trained and have on-job expertise.</p>
-          </div>
-        </div>
-        <div className="feature">
-        <img src={Equipment} alt="Repair Services" />
-          <div>
-            <h3>Fully equipped</h3>
-            <p>We bring everything needed to get the job done well.</p>
-          </div>
-        </div>
-      </div>
-      <div className="why-right">
-        <div className="quality-box">
-        <img src={QA} alt="Quality Assured" />
-          <h3>100% Quality Assured</h3>
-          <p>If you don’t love our service, we will make it right.</p>
-        </div>
-      </div>
-    </div>
-    </section>
-
+      </section>
 
       <section className="testimonial-section">
         <div className="testimonial-card">

@@ -1,53 +1,62 @@
+/* General Reset */
+
+
 .service-page {
   padding-top: 5%;
+  min-height: 100vh; /* Ensure the page takes up full height */
 }
-.service-container{
+
+.service-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 3rem;
-  margin-bottom: 5rem; /* Add margin at the bottom */
-  background-color:white;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
 }
 
 .search-section {
-  position: relative; /* Change to relative to avoid overlap */
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  width: 100%;
-  display: grid;
-  place-items: center;
-  gap: 1px;
-  padding: 2rem;
-  margin-bottom: 0; /* Remove the margin to create the smallest gap */
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem 0;
+  text-align: center;
 }
 
 .search-section h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: #6a5acd;
+  margin-bottom: 1rem;
 }
 
 .search-group {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
-  width: 300px; /* Reduce the width */
+  width: 100%;
+  max-width: 400px; /* Limit the width of the search bar */
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   background-color: #fff;
-  padding-left: 10px;
-  padding: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.input-icon {
+.search-group:hover {
+  border-color: #6a5acd; /* Highlight on hover */
+}
+
+.search-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 40px;
+  height: 100%;
   background-color: #f9f9f9;
   color: #666;
   font-size: 1.2rem;
-  pointer-events: none;
-  padding: 10px;
 }
 
 .search-group input {
@@ -55,43 +64,49 @@
   border: none;
   outline: none;
   font-size: 1rem;
-  border-radius: 0;
-  padding: 0.5rem;
+  padding: 0.75rem;
+  background-color: transparent;
 }
 
 .services-grid {
   display: grid;
-  margin-top: 0; /* Remove the margin-top to bring the cards closer */
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  place-items: center;
-  gap: 20px; /* Increase gap to improve spacing between cards */
-  margin-bottom: 40px;
-  padding: 2rem;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding: 1rem;
 }
 
 .booking-section {
   text-align: center;
   background-color: #f9f9f9;
-  padding: 60px 20px; /* Increase padding for more space */
-  margin: 60px 0; /* Increase margin for more space */
+  padding: 4rem 2rem;
+  margin: 4rem 0;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .booking-section h2 {
-  margin-bottom: 20px; /* Add margin below the heading */
+  font-size: 2rem;
+  font-weight: bold;
   color: #6a5acd;
+  margin-bottom: 1rem;
 }
 
 .booking-section p {
-  margin-bottom: 30px; /* Add margin below the paragraph */
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 2rem;
 }
 
 .booking-section button {
   background-color: #6a5acd;
   color: white;
-  padding: 15px 25px;
+  padding: 1rem 2rem;
   border: none;
+  border-radius: 0.5rem;
   cursor: pointer;
-  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
 .booking-section button:hover {
@@ -100,8 +115,38 @@
 
 .btn-rates {
   background-color: #fff;
-  border: 1px solid #6a6eff;
-  color: #6a6eff;
-  border-radius: 10px;
-  margin: 10px; /* Add margin to create space around the button */
+  border: 1px solid #6a5acd;
+  color: #6a5acd;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0.5rem;
+}
+
+.btn-rates:hover {
+  background-color: #6a5acd;
+  color: white;
+  border-color: transparent;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .search-section h1 {
+    font-size: 2rem;
+  }
+
+  .search-group {
+    max-width: 100%; /* Full width on smaller screens */
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr; /* Single column layout */
+    gap: 1.5rem;
+  }
+
+  .booking-section {
+    padding: 3rem 1rem;
+  }
 }
