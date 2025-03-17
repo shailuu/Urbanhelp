@@ -1,7 +1,71 @@
-.btn-rates {
-    background-color: #fff;
-    border: 1px solid #6a6eff;
-    color: #6a6eff;
-    border-radius: 10px;
-    margin: 10px; /* Add margin to create space around the button */
+.service-card {
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Arrange items vertically */
+  justify-content: space-between; /* Distribute space between items */
+  align-items: center; /* Center align horizontally */
+  text-align: center; /* Ensure text inside is centered */
+  padding: 20px;
+  border: 1px solid #ccc; /* Optional border around the card */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for the card */
+  transition: transform 0.3s ease-in-out; /* Optional smooth hover effect */
+  width: 100%; /* Ensure consistent width */
+  max-width: 300px; /* Set a maximum width for each card */
+  height: 450px; /* Set a fixed height for all cards */
+  overflow: hidden; /* Prevent content from overflowing */
+}
+
+.service-card:hover {
+  transform: scale(1.05); /* Optional zoom-in effect on hover */
+}
+
+.service-card img {
+  width: 100%; /* Make sure the image fits the card */
+  height: 150px; /* Set a fixed height for all images */
+  object-fit: cover; /* Maintain aspect ratio and crop if necessary */
+  border-radius: 10px; /* Rounded corners for the image */
+  margin-bottom: 15px; /* Add spacing between the image and other content */
+}
+
+.service-card h3 {
+  font-size: 18px; /* Set a consistent font size for titles */
+  margin: 0 0 10px 0; /* Add spacing below the title */
+  height: 48px; /* Limit the height of the title to prevent overflow */
+  overflow: hidden; /* Hide overflowed text */
+  text-overflow: ellipsis; /* Add ellipsis for long titles */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+}
+
+.service-card p {
+  font-size: 14px; /* Set a consistent font size for descriptions */
+  margin: 0 0 15px 0; /* Add spacing below the description */
+  height: 60px; /* Limit the height of the description */
+  overflow: hidden; /* Hide overflowed text */
+  text-overflow: ellipsis; /* Add ellipsis for long descriptions */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limit to 3 lines */
+  -webkit-box-orient: vertical;
+}
+
+.learn-more-btn {
+  background-color: #6a6eff; /* Button background color */
+  color: white; /* Button text color */
+  padding: 10px 20px; /* Button padding */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 16px; /* Adjust font size */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  margin-top: auto; /* Push the button to the bottom of the card */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effect */
+}
+
+.learn-more-btn:hover {
+  background-color: #4e4fce; /* Darker color on hover */
+  transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+.learn-more-btn:focus {
+  outline: none; /* Remove the default focus outline */
 }

@@ -10,6 +10,7 @@ import ContactUs from '../pages/ContactUs/ContactUs';
 import Profile from '../pages/Profile/Profile';
 import Bookings from '../pages/Bookings/Bookings';
 import Error from '../pages/Error/Error';
+import ServiceDetail from '../pages/Services/ServiceDetail';
 
 function AppRoutes() {
   return (
@@ -25,8 +26,7 @@ function AppRoutes() {
         <Route path="/profile" element={<Profile />} />
         <Route path='/booking' element={<Bookings/>} />
         <Route path ="*" element= {<Error/>} /> 
-        {/* <Route path="/login" element={<LoginPopup onClose={() => {}} />} />
-        <Route path="/signup" element={<SignupPopup onClose={() => {}} />} /> */}
+        <Route path="/services/:id" element={<ServiceDetail />} /> 
       </Routes>
     </Router>
   );

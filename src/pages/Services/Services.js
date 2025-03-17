@@ -11,7 +11,7 @@ function Services() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5001/api/services") // Replace with your actual backend API
+    fetch("http://localhost:5001/api/services") 
       .then((response) => response.json())
       .then((data) => setServices(data))
       .catch((error) => console.error("Error fetching services:", error));
@@ -41,7 +41,7 @@ function Services() {
         </div>
         <div className="services-grid">
           {filteredServices.map((service, index) => (
-            <ServiceCard key={index} {...service} />
+            <ServiceCard key={service._id} {...service} />
           ))}
         </div>
       </div>
