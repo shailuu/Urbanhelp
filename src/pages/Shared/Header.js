@@ -7,8 +7,10 @@ import { faUser, faBell, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
 import LoginPopup from "../../Components/Popups/LoginPopup";
 import SignupPopup from "../../Components/Popups/SignupPopup";
 
+// Components/Header.js
+
 function Header() {
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isLoginPopupOpen, setLoginPopupOpen] = useState(false);
   const [isSignupPopupOpen, setSignupPopupOpen] = useState(false);
@@ -57,6 +59,7 @@ function Header() {
             </button>
             <button className="icon-btn" onClick={() => navigate("/profile")}>
               <FontAwesomeIcon icon={faUser} />
+              <span>{user?.username}</span> {/* Display username */}
             </button>
             <button
               onClick={() => {
