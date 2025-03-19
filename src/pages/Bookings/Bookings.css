@@ -1,8 +1,11 @@
+/* General Styles */
 .booking-container {
   max-width: 1200px;
-  margin: 60px auto 0; /* Added top margin to account for header */
+  margin: 20px auto;
   padding: 2rem;
-  min-height: calc(100vh - 80px); /* Adjust this value based on your header height */
+  background: #f5f7fb;
+  border-radius: 12px;
+  min-height: calc(100vh - 120px);
 }
 
 .booking-title {
@@ -10,8 +13,7 @@
   font-weight: 600;
   text-align: center;
   margin-bottom: 0.5rem;
-  color: #4338ca;
-  padding-top: 1rem; /* Added padding to ensure clear separation from header */
+  color: #1a1a1a;
 }
 
 .booking-subtitle {
@@ -26,25 +28,44 @@
   gap: 2rem;
 }
 
+@media (max-width: 768px) {
+  .booking-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card Styles */
 .card {
   background: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
+  overflow: hidden;
 }
 
 .card-content {
   padding: 1.5rem;
 }
 
-/* Updated progress bar styles for horizontal layout */
-.progress-bar {
+/* Loading indicator */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 18px;
+  color: #666;
+}
+
+/* Step Indicator */
+.steps-container {
+  margin-bottom: 2rem;
+}
+
+.step-indicator {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2rem;
   width: 100%;
-  flex-direction: row; /* Ensure horizontal layout */
+  padding: 0 1rem;
 }
 
 .step {
@@ -56,8 +77,8 @@
   align-items: center;
   justify-content: center;
   font-weight: 500;
+  color: #666;
   transition: all 0.3s ease;
-  flex-shrink: 0; /* Prevent step numbers from shrinking */
   position: relative;
   z-index: 2;
 }
@@ -72,13 +93,14 @@
   height: 2px;
   background-color: #e5e7eb;
   margin: 0 0.5rem;
-  transition: background-color 0.3s ease;
 }
 
+/* Form Sections */
 .form-section h2 {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  color: #333;
 }
 
 .form-subtitle {
@@ -94,18 +116,27 @@
   margin-bottom: 2rem;
 }
 
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
   font-size: 14px;
   font-weight: 500;
+  color: #333;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   padding: 0.75rem;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
@@ -113,13 +144,15 @@
   transition: border-color 0.2s ease;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
   outline: none;
   border-color: #4f46e5;
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
 }
 
-.form-group input.error {
+.form-group input.error,
+.form-group select.error {
   border-color: #ef4444;
 }
 
@@ -129,148 +162,29 @@
   margin-top: 0.25rem;
 }
 
+/* Buttons */
 .next-button {
   background-color: #4f46e5;
   color: white;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  border-radius: 50px;
   font-weight: 500;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: block;
+  margin: 0 auto;
 }
 
 .next-button:hover {
   background-color: #4338ca;
 }
 
-.next-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5);
-}
-
-.service-details h2 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.service-card {
-  display: flex;
-  gap: 1rem;
-}
-
-.service-info {
-  flex: 1;
-}
-
-.service-info h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.service-info p {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 1rem;
-}
-
-.price-info {
-  margin-top: auto;
-}
-
-.price-info p {
-  margin-bottom: 0.25rem;
-}
-
-.price-note {
-  font-size: 12px;
-  color: #666;
-  font-style: italic;
-}
-
-.service-image img {
-  border-radius: 0.5rem;
-  object-fit: cover;
-}
-
-.date-picker, .time-picker {
-    margin-bottom: 1.5rem;
-}
-
-.time-picker select {
-    padding: 0.75rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    font-size: 14px;
-    width: 100%;
-    transition: border-color 0.2s ease;
-}
-
-.time-picker select:focus {
-    outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
-}
-
-@media (max-width: 768px) {
-  .booking-container {
-    margin-top: 60px; /* Adjust for smaller header on mobile */
-    padding: 1rem;
-  }
-
-  .booking-content {
-    grid-template-columns: 1fr;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .progress-bar {
-    padding: 0 0.5rem;
-  }
-  
-  .step {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
-  }
-}
-.react-datepicker-wrapper {
-  width: 100%;
-}
-
-.react-datepicker__input-container input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-size: 14px;
-  transition: border-color 0.2s ease;
-}
-
-.react-datepicker__input-container input:focus {
-  outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
-}
-
-.react-datepicker__input-container input.error {
-  border-color: #ef4444;
-}
-.form-navigation {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2rem;
-}
-
 .previous-button {
   background-color: #e5e7eb;
   color: #333;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  border-radius: 50px;
   font-weight: 500;
   border: none;
   cursor: pointer;
@@ -281,7 +195,144 @@
   background-color: #d1d5db;
 }
 
-.previous-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(209, 213, 219, 0.5);
+.form-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+/* Date and Time Picker */
+.date-time-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .date-time-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.date-picker,
+.time-picker {
+  margin-bottom: 1.5rem;
+}
+
+.date-picker label,
+.time-picker label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 14px;
+}
+
+.time-picker select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 14px;
+}
+
+/* New Styles for Selected Service Section */
+.service-selection-container {
+  align-self: flex-start;
+  margin-top: 1rem;
+}
+
+.service-selection-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.service-selection-header {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.service-selection-info {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.service-selection-details {
+  flex: 1;
+}
+
+.service-selection-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.service-selection-description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.service-selection-metadata {
+  margin-top: 0.5rem;
+}
+
+.service-selection-metadata p {
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  color: #666;
+}
+
+.service-selection-price {
+  margin-top: 0.5rem;
+}
+
+.service-selection-price p {
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.service-selection-note {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+.service-selection-image {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.service-selection-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }

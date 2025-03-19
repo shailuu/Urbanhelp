@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "../Shared/Header";
 import Footer from "../Shared/Footer";
 import "./ServiceDetail.css";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 function ServiceDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { isAuthenticated } = useContext(AuthContext); // Use AuthContext for authentication
     const [service, setService] = useState(null);
     const [selectedDuration, setSelectedDuration] = useState("");
     const [charge, setCharge] = useState(0);
-
-    // Simulating a login check (Replace with actual login check)
-    const isLoggedIn = localStorage.getItem("userToken"); // Example check
 
     useEffect(() => {
         fetch(`http://localhost:5001/api/services/${id}`)
@@ -34,8 +34,9 @@ function ServiceDetail() {
     };
 
     const handleBookNow = () => {
-        if (!isLoggedIn) {
+        if (!isAuthenticated) {
             alert("Please log in to proceed with the booking.");
+            navigate("/login"); // Redirect to login page
             return;
         }
         navigate(`/booking/${id}?duration=${selectedDuration}&charge=${charge}`);
