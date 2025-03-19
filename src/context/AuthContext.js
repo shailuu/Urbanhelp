@@ -1,17 +1,23 @@
-// context/AuthContext.js
-
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null); // Add state for user-specific data
+  // Initialize state from localStorage
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return !!localStorage.getItem("token"); // Check if token exists
+  });
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null; // Parse stored user data
+  });
 
   // Login function
   const login = (userData) => {
     setIsAuthenticated(true);
     setUser(userData); // Store user-specific data
+    localStorage.setItem("token", userData.token); // Save token to localStorage
+    localStorage.setItem("user", JSON.stringify(userData)); // Save user data
     console.log("User logged in. isAuthenticated:", true, "User:", userData);
   };
 
@@ -19,6 +25,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null); // Clear user-specific data
+    localStorage.removeItem("token"); // Remove token from localStorage
+    localStorage.removeItem("user"); // Remove user data
     console.log("User logged out. isAuthenticated:", false);
   };
 

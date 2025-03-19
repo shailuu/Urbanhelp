@@ -24,33 +24,35 @@ function SignupPopup({ onClose }) {
 
   // Components/Popups/SignupPopup.js
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
-  try {
-    const response = await fetch("http://localhost:5001/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, email, password }),
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Registration failed");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("http://localhost:5001/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed");
+      }
+      alert("User registered successfully!");
+      // Log the user in automatically
+      login({
+        token: data.token,
+        username: data.user.username,
+        email: data.user.email,
+      });
+      onClose();
+      navigate("/");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
-    alert("User registered successfully!");
-
-    // Optionally log the user in automatically
-    login(data.user);
-
-    onClose();
-    navigate("/");
-  } catch (error) {
-    setError(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="popup-overlay">

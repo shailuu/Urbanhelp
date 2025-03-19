@@ -7,19 +7,19 @@ import { faUser, faBell, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
 import LoginPopup from "../../Components/Popups/LoginPopup";
 import SignupPopup from "../../Components/Popups/SignupPopup";
 
-// Components/Header.js
-
 function Header() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [isLoginPopupOpen, setLoginPopupOpen] = useState(false);
-  const [isSignupPopupOpen, setSignupPopupOpen] = useState(false);
 
-  const openLoginPopup = () => setLoginPopupOpen(true);
-  const closeLoginPopup = () => setLoginPopupOpen(false);
+  // State for managing popup visibility
+  const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+  const [isSignupPopupOpen, setIsSignupPopupOpen] = useState(false);
 
-  const openSignupPopup = () => setSignupPopupOpen(true);
-  const closeSignupPopup = () => setSignupPopupOpen(false);
+  // Functions to open and close popups
+  const openLoginPopup = () => setIsLoginPopupOpen(true);
+  const closeLoginPopup = () => setIsLoginPopupOpen(false);
+  const openSignupPopup = () => setIsSignupPopupOpen(true);
+  const closeSignupPopup = () => setIsSignupPopupOpen(false);
 
   return (
     <div className="header">

@@ -19,15 +19,13 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
+  // Fetch user data on component mount
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
-      // If no token, redirect to login
       navigate("/login");
       return;
     }
-
     const fetchUserData = async () => {
       try {
         const response = await fetch("http://localhost:5001/api/auth/profile", {
@@ -36,11 +34,9 @@ function Profile() {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (!response.ok) {
           throw new Error("Failed to fetch user data.");
         }
-
         const userData = await response.json();
         setFormData({
           firstName: userData.username || "",
@@ -57,10 +53,10 @@ function Profile() {
         setLoading(false);
       }
     };
-
     fetchUserData();
   }, [navigate]);
 
+  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -69,15 +65,14 @@ function Profile() {
     }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-
     if (!token) {
       setError("No token found. Please log in.");
       return;
     }
-
     try {
       const response = await fetch("http://localhost:5001/api/auth/profile", {
         method: "PUT",
@@ -87,21 +82,24 @@ function Profile() {
         },
         body: JSON.stringify(formData),
       });
-
       if (!response.ok) {
         throw new Error("Failed to update user data.");
       }
-
       alert("Profile updated successfully!");
+      setIsEditing(false); // Exit edit mode after saving
     } catch (err) {
       alert("Failed to update profile. Please try again.");
     }
   };
 
+  // Handle Add Email button click
+  const handleAddEmail = () => {
+    alert("This feature will be implemented soon!");
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
-
   if (error) {
     return <p>{error}</p>;
   }
@@ -113,7 +111,11 @@ function Profile() {
         <h1 className="welcome-text">Welcome, {formData.firstName}</h1>
         <div className="profile-header">
           <div className="profile-image-container">
-            <img src="/api/placeholder/48/48" alt="Profile" className="profile-image" />
+            <img
+              src="/api/placeholder/48/48"
+              alt="Profile"
+              className="profile-image"
+            />
           </div>
           <div className="profile-info">
             <p className="profile-name">{formData.firstName}</p>
@@ -126,7 +128,6 @@ function Profile() {
             {isEditing ? "Cancel Edit" : "Edit"}
           </button>
         </div>
-
         <form onSubmit={handleSubmit} className="form-grid">
           <div className="form-group">
             <label>Name</label>
@@ -211,7 +212,6 @@ function Profile() {
             </button>
           )}
         </form>
-
         {/* Email Section */}
         <div className="email-section">
           <h2>My Email Address</h2>
@@ -219,13 +219,14 @@ function Profile() {
             <div className="email-dot"></div>
             <div className="email-details">
               <p className="email-address">{formData.email}</p>
-              <p className="email-time">1 month ago</p>
+              <p className="email-time">Added 1 month ago</p>
             </div>
           </div>
-          <button className="add-email-button">+ Add Email Address</button>
+          <button className="add-email-button" onClick={handleAddEmail}>
+            + Add Email Address
+          </button>
         </div>
       </div>
-
       <Footer />
     </div>
   );

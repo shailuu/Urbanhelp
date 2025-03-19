@@ -1,6 +1,6 @@
 /* General Styles */
 .profile-page {
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   background: #f4f4f9;
   min-height: 100vh;
   display: flex;
@@ -21,7 +21,7 @@ header {
 
 /* Profile Container */
 .profile-container {
-  max-width: 2000px; /* Increased width */
+  max-width: 1200px; /* Responsive width */
   margin: auto;
   background: white;
   padding: 40px;

@@ -18,35 +18,35 @@ function LoginPopup({ onClose }) {
 
   // Components/Popups/LoginPopup.js
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
-  try {
-    const response = await fetch("http://localhost:5001/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Login failed");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("http://localhost:5001/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+      alert("Logged in successfully!");
+      // Update AuthContext with user data
+      login({
+        token: data.token,
+        username: data.user.username,
+        email: data.user.email,
+      });
+      onClose();
+      navigate("/");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
-    console.log("API Response:", data); // Debugging line
-    alert("Logged in successfully!");
-
-    // Pass user-specific data to the login function
-    login(data.user);
-
-    onClose(); // Close the popup
-    navigate("/"); // Redirect to the homepage
-  } catch (error) {
-    console.error("Login Error:", error.message); // Debugging line
-    setError(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="popup-overlay">
