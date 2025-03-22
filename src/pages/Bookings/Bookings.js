@@ -19,10 +19,10 @@ const Bookings = () => {
 
   // State for form data
   const [formData, setFormData] = useState({
-    clientName: user?.name || "", // Use user's name if available
+    clientName: user?.username || "", // Use user's username if available
     email: user?.email || "", // Use user's email if available
     phoneNumber: user?.phoneNumber || "", // Use user's phone number if available
-    location: user?.location || "", // Use user's location if available
+    location: user?.city || "", // Use user's city as location if available
   });
 
   const [currentStep, setCurrentStep] = useState(1);

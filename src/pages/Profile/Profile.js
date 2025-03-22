@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const [formData, setFormData] = useState({
-    firstName: "",
+    username: "",
     dob: "",
     gender: "",
     city: "",
@@ -17,6 +17,7 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const navigate = useNavigate();
 
   // Fetch user data on component mount
@@ -39,13 +40,13 @@ function Profile() {
         }
         const userData = await response.json();
         setFormData({
-          firstName: userData.username || "",
-          dob: userData.dob || "",
-          gender: userData.gender || "",
-          city: userData.city || "",
-          phoneNumber: userData.phoneNumber || "",
-          address: userData.address || "",
-          email: userData.email || "",
+          username: userData.username || "", // Required field
+          dob: userData.dob || "", // Optional field
+          gender: userData.gender || "", // Optional field
+          city: userData.city || "", // Optional field
+          phoneNumber: userData.phoneNumber || "", // Optional field
+          address: userData.address || "", // Optional field
+          email: userData.email || "", // Required field
         });
       } catch (err) {
         setError("Failed to fetch profile data. Please try again.");
@@ -68,11 +69,21 @@ function Profile() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.username || !formData.email) {
+      alert("Username and Email are required fields.");
+      return;
+    }
+
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found. Please log in.");
       return;
     }
+    
+    // Create a copy without email (since it's not updatable)
+    const dataToSend = { ...formData };
+    delete dataToSend.email;
+    
     try {
       const response = await fetch("http://localhost:5001/api/auth/profile", {
         method: "PUT",
@@ -80,35 +91,72 @@ function Profile() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
+      
       if (!response.ok) {
         throw new Error("Failed to update user data.");
       }
-      alert("Profile updated successfully!");
+      
+      const result = await response.json();
+      
+      setUpdateSuccess(true);
+      setTimeout(() => setUpdateSuccess(false), 3000); // Hide success message after 3 seconds
       setIsEditing(false); // Exit edit mode after saving
     } catch (err) {
       alert("Failed to update profile. Please try again.");
     }
   };
 
-  // Handle Add Email button click
-  const handleAddEmail = () => {
-    alert("This feature will be implemented soon!");
+  // Handle profile completeness percentage
+  const calculateProfileCompleteness = () => {
+    const fields = ["username", "email", "dob", "gender", "city", "phoneNumber", "address"];
+    const filledFields = fields.filter(field => formData[field] && formData[field].trim() !== "");
+    return Math.round((filledFields.length / fields.length) * 100);
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="loading-container">
+        <p>Loading your profile...</p>
+      </div>
+    );
   }
+  
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <div className="error-container">
+        <p>{error}</p>
+        <button onClick={() => navigate("/login")}>Back to Login</button>
+      </div>
+    );
   }
+
+  const completeness = calculateProfileCompleteness();
 
   return (
     <div className="profile-page">
       <Header />
       <div className="profile-container">
-        <h1 className="welcome-text">Welcome, {formData.firstName}</h1>
+        <h1 className="welcome-text">Welcome, {formData.username}</h1>
+        
+        {/* Profile Completeness Indicator */}
+        <div className="profile-completeness">
+          <div className="completeness-bar">
+            <div 
+              className="completeness-fill" 
+              style={{ width: `${completeness}%` }}
+            ></div>
+          </div>
+          <p>Profile {completeness}% complete</p>
+        </div>
+
+        {updateSuccess && (
+          <div className="success-message">
+            Profile updated successfully!
+          </div>
+        )}
+        
         <div className="profile-header">
           <div className="profile-image-container">
             <img
@@ -118,26 +166,28 @@ function Profile() {
             />
           </div>
           <div className="profile-info">
-            <p className="profile-name">{formData.firstName}</p>
+            <p className="profile-name">{formData.username}</p>
             <p className="profile-email">{formData.email}</p>
           </div>
           <button
             className="edit-button"
             onClick={() => setIsEditing(!isEditing)}
           >
-            {isEditing ? "Cancel Edit" : "Edit"}
+            {isEditing ? "Cancel Edit" : "Edit Profile"}
           </button>
         </div>
+        
         <form onSubmit={handleSubmit} className="form-grid">
           <div className="form-group">
-            <label>Name</label>
+            <label>Username</label>
             <input
               type="text"
-              name="firstName"
-              value={formData.firstName}
+              name="username"
+              value={formData.username}
               onChange={handleInputChange}
               disabled={!isEditing}
               className="form-input"
+              required
             />
           </div>
           <div className="form-group">
@@ -212,6 +262,7 @@ function Profile() {
             </button>
           )}
         </form>
+        
         {/* Email Section */}
         <div className="email-section">
           <h2>My Email Address</h2>
@@ -219,12 +270,9 @@ function Profile() {
             <div className="email-dot"></div>
             <div className="email-details">
               <p className="email-address">{formData.email}</p>
-              <p className="email-time">Added 1 month ago</p>
+              <p className="email-time">Primary Email</p>
             </div>
           </div>
-          <button className="add-email-button" onClick={handleAddEmail}>
-            + Add Email Address
-          </button>
         </div>
       </div>
       <Footer />
