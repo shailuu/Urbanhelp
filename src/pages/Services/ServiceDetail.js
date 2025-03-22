@@ -50,35 +50,43 @@ function ServiceDetail() {
         <div className="service-detail-page">
             <Header />
             <div className="service-detail-container">
-                <h1 className="title">{service.title}</h1>
-                <img className="service-image" src={service.image} alt={service.title} />
-                <p className="description">{service.description}</p>
-                {service.additionalDetails && (
-                    <p className="additional-details">
-                        <strong>Additional Details:</strong> {service.additionalDetails}
-                    </p>
-                )}
-                <div className="dropdown-container">
-                    <label htmlFor="duration">Select Duration:</label>
-                    <select id="duration" value={selectedDuration} onChange={handleDurationChange}>
-                        <option value="">--Choose Duration--</option>
-                        {service.durations.map((option, index) => (
-                            <option key={index} value={option.duration}>
-                                {option.duration}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                {charge > 0 && (
-                    <p className="charge">
-                        <strong>Charge:</strong> ${charge}
-                    </p>
-                )}
+                <div className="content-wrapper">
+                    {/* Image Column */}
+                    <div className="image-column">
+                        <img className="service-image" src={service.image} alt={service.title} />
+                    </div>
 
-                {/* Book Now Button */}
-                {charge > 0 && (
-                    <button className="book-now-btn" onClick={handleBookNow}>Book Now</button>
-                )}
+                    {/* Text Column */}
+                    <div className="text-column">
+                        <h1 className="title">{service.title}</h1>
+                        <p className="description">{service.description}</p>
+                        {service.additionalDetails && (
+                            <p className="additional-details">
+                                <strong>Additional Details:</strong> {service.additionalDetails}
+                            </p>
+                        )}
+                        <div className="dropdown-container">
+                            <label htmlFor="duration">Select Duration:</label>
+                            <select id="duration" value={selectedDuration} onChange={handleDurationChange}>
+                                <option value="">--Choose Duration--</option>
+                                {service.durations.map((option, index) => (
+                                    <option key={index} value={option.duration}>
+                                        {option.duration}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        {charge > 0 && (
+                            <p className="charge">
+                                <strong>Charge:</strong> ${charge}
+                            </p>
+                        )}
+                        {/* Book Now Button */}
+                        {charge > 0 && (
+                            <button className="book-now-btn" onClick={handleBookNow}>Book Now</button>
+                        )}
+                    </div>
+                </div>
             </div>
             <Footer />
         </div>

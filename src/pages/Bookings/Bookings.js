@@ -5,6 +5,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./Bookings.css";
 import Header from "../Shared/Header";
 import Footer from "../Shared/Footer";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 const Bookings = () => {
   const { id } = useParams();
@@ -12,13 +14,17 @@ const Bookings = () => {
   const duration = searchParams.get("duration");
   const charge = searchParams.get("charge");
 
+  // Access the logged-in user's profile from AuthContext
+  const { isAuthenticated, user } = useContext(AuthContext);
+
   // State for form data
   const [formData, setFormData] = useState({
-    clientName: "",
-    email: "",
-    phoneNumber: "",
-    location: "",
+    clientName: user?.name || "", // Use user's name if available
+    email: user?.email || "", // Use user's email if available
+    phoneNumber: user?.phoneNumber || "", // Use user's phone number if available
+    location: user?.location || "", // Use user's location if available
   });
+
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState("12:00 PM");
@@ -179,7 +185,9 @@ const Bookings = () => {
                 {currentStep === 1 && (
                   <div className="form-section">
                     <h2>Contact details</h2>
-                    <p className="form-subtitle">Please edit your info if necessary.</p>
+                    <p className="form-subtitle">
+                      These details are pre-filled from your profile. You can edit them if needed.
+                    </p>
                     <div className="form-grid">
                       <div className="form-group">
                         <label>Client name</label>
@@ -250,7 +258,9 @@ const Bookings = () => {
                 {currentStep === 2 && (
                   <div className="form-section">
                     <h2>Date & Time</h2>
-                    <p className="form-subtitle">Please select your preferred date and time.</p>
+                    <p className="form-subtitle">
+                      Please select your preferred date and time.
+                    </p>
                     <div className="date-time-container">
                       <div className="date-picker">
                         <label>Select Date</label>
@@ -310,7 +320,6 @@ const Bookings = () => {
               </div>
             </div>
           </div>
-
           {/* Updated Selected Service Section */}
           <div className="service-selection-container">
             <div className="service-selection-card">
