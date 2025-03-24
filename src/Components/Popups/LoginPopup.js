@@ -1,46 +1,61 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import "./LoginPopup.css";
+import "./LoginPopup.css"; // Make sure to have matching styles
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import { AuthContext } from "../../context/AuthContext";
+import OTPVerificationPopup from "./OTPVerificationPopup";
 
 function LoginPopup({ onClose }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showOTPVerification, setShowOTPVerification] = useState(false);
   const { login } = useContext(AuthContext);
+  const { email, password } = formData;
   const navigate = useNavigate();
 
-  const handleEmailChange = (e) => setEmail(e.target.value);
-  const handlePasswordChange = (e) => setPassword(e.target.value);
-
-  // Components/Popups/LoginPopup.js
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    
     try {
       const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+      
       const data = await response.json();
+      
       if (!response.ok) {
+        // Check if verification is required (403 status with requiresVerification flag)
+        if (response.status === 403 && data.requiresVerification) {
+          setShowOTPVerification(true);
+          return;
+        }
         throw new Error(data.message || "Login failed");
       }
-      alert("Logged in successfully!");
-      // Update AuthContext with user data
+      
+      // Login successful
       login({
         token: data.token,
         username: data.user.username,
         email: data.user.email,
+        id: data.user.id
       });
       onClose();
       navigate("/");
+      
     } catch (error) {
       setError(error.message);
     } finally {
@@ -48,43 +63,64 @@ function LoginPopup({ onClose }) {
     }
   };
 
+  const handleVerified = (data) => {
+    // After successful OTP verification
+    login({
+      token: data.token,
+      username: data.user.username,
+      email: data.user.email,
+      id: data.user.id
+    });
+    onClose();
+    navigate("/");
+  };
+
+  // If OTP verification is needed, show the OTP popup instead
+  if (showOTPVerification) {
+    return (
+      <OTPVerificationPopup
+        email={email}
+        onVerified={handleVerified}
+        onClose={onClose}
+      />
+    );
+  }
+
   return (
     <div className="popup-overlay">
       <div className="popup-content">
         <button className="close-btn" onClick={onClose}>
           &times;
         </button>
-        <h1>Login</h1>
-        <p>Log in to your account</p>
+        <h1>Log In to Your Account</h1>
+        <p>Welcome back!</p>
         {error && <p className="error-message">{error}</p>}
-        <form onSubmit={handleSubmit} className="login-form">
+        <form className="login-form" onSubmit={handleSubmit}>
           <div className="input-group">
-            <span className="input-icon">
-              <FontAwesomeIcon icon={faEnvelope} />
-            </span>
+            <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
             <input
               type="email"
+              name="email"
               placeholder="Your email address"
-              required
               value={email}
-              onChange={handleEmailChange}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="input-group">
-            <span className="input-icon">
-              <FontAwesomeIcon icon={faLock} />
-            </span>
+            <FontAwesomeIcon icon={faLock} className="input-icon" />
             <input
               type="password"
+              name="password"
               placeholder="Enter your password"
-              required
               value={password}
-              onChange={handlePasswordChange}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="form-actions">
             <button type="submit" className="login-btn" disabled={loading}>
-              {loading ? "Logging In..." : "Login"}
+              {loading ? "Logging In..." : "Log In"}
             </button>
           </div>
         </form>

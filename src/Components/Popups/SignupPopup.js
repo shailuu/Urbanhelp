@@ -4,6 +4,7 @@ import "./SignupPopup.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import { AuthContext } from "../../context/AuthContext";
+import OTPVerificationPopup from "./OTPVerificationPopup";
 
 function SignupPopup({ onClose }) {
   const [formData, setFormData] = useState({
@@ -13,7 +14,8 @@ function SignupPopup({ onClose }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { login } = useContext(AuthContext); // Use login function
+  const [showOTPVerification, setShowOTPVerification] = useState(false);
+  const { login } = useContext(AuthContext);
   const { username, email, password } = formData;
   const navigate = useNavigate();
 
@@ -22,37 +24,70 @@ function SignupPopup({ onClose }) {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Components/Popups/SignupPopup.js
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    
     try {
       const response = await fetch("http://localhost:5001/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
       });
+      
       const data = await response.json();
+      
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
       }
-      alert("User registered successfully!");
-      // Log the user in automatically
-      login({
-        token: data.token,
-        username: data.user.username,
-        email: data.user.email,
-      });
-      onClose();
-      navigate("/");
+      
+      // Check if verification is required
+      if (data.requiresVerification) {
+        // Show OTP verification popup instead of logging in directly
+        setShowOTPVerification(true);
+      } else {
+        // If for some reason verification is not required, proceed with login
+        alert("User registered successfully!");
+        login({
+          token: data.token,
+          username: data.user?.username,
+          email: data.user?.email,
+        });
+        onClose();
+        navigate("/");
+      }
+      
     } catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleVerified = (data) => {
+    // After successful OTP verification
+    alert("Email verified successfully!");
+    login({
+      token: data.token,
+      username: data.user?.username,
+      email: data.user?.email,
+      id: data.user?.id
+    });
+    onClose();
+    navigate("/");
+  };
+
+  // If OTP verification is needed, show the OTP popup instead
+  if (showOTPVerification) {
+    return (
+      <OTPVerificationPopup
+        email={email}
+        onVerified={handleVerified}
+        onClose={onClose}
+      />
+    );
+  }
 
   return (
     <div className="popup-overlay">
