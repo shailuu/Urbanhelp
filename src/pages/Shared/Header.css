@@ -4,12 +4,13 @@
   justify-content: space-between;
   align-items: center;
   background-color: white;
-  padding: 10px 40px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px 50px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   width: 100%;
   position: fixed;
   top: 0;
   z-index: 1000;
+  height: 80px;
 }
 
 /* Logo styling */
@@ -17,25 +18,33 @@
   display: flex;
   align-items: center;
   cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.header-logo:hover {
+  transform: scale(1.05);
 }
 
 .header-logo img {
-  height: 35px; /* Slightly larger logo */
-  margin-right: 10px;
+  height: 40px;
+  margin-right: 12px;
 }
 
 .header-logo span {
-  font-size: 1.75rem; /* Larger font size for the logo text */
-  font-weight: bold;
+  font-size: 1.8rem;
+  font-weight: 700;
   color: #333;
-  letter-spacing: 1px; /* Adds a professional touch */
+  letter-spacing: 1px;
+  background: linear-gradient(45deg, #6a6eff, #8a8eff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Navigation links */
 .header-nav {
   display: flex;
   gap: 30px;
-  align-items: center; /* Align links vertically */
+  align-items: center;
 }
 
 .header-nav a {
@@ -43,7 +52,9 @@
   color: #666;
   text-decoration: none;
   position: relative;
-  transition: all 0.3s ease; /* Smooth transitions */
+  transition: all 0.3s ease-in-out;
+  font-weight: 500;
+  padding: 10px;
 }
 
 .header-nav a:hover {
@@ -54,100 +65,193 @@
   color: #6a6eff;
 }
 
-.header-nav a.active::after {
+.header-nav a::after {
   content: '';
   position: absolute;
-  bottom: -5px;
-  left: 0;
-  right: 0;
+  bottom: -4px;
+  left: 50%;
+  width: 0;
   height: 3px;
   background-color: #6a6eff;
   border-radius: 2px;
+  transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+}
+
+.header-nav a:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+.header-nav a.active::after {
+  width: 100%;
+  left: 0;
 }
 
 /* Header buttons */
 .header-buttons {
   display: flex;
-  gap: 15px;
-  align-items: center; /* Align buttons vertically */
+  gap: 20px;
+  align-items: center;
 }
 
 /* Login and Signup buttons */
 .login-btn,
 .signup-btn {
-  padding: 8px 16px; /* Adjusted padding for better balance */
-  font-size: 0.9rem;
-  border-radius: 20px; /* Rounded corners for modern look */
+  padding: 12px 22px;
+  font-size: 0.95rem;
+  border-radius: 50px;
   border: none;
   cursor: pointer;
-  white-space: nowrap; /* Prevents text from breaking into two lines */
-  transition: all 0.3s ease; /* Smooth transitions */
-  font-weight: 500; /* Bold text for emphasis */
+  white-space: nowrap;
+  transition: all 0.3s ease-in-out;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 6px rgba(106, 110, 255, 0.2);
+  /* Align buttons vertically with other elements */
+  align-self: center;
 }
 
 .login-btn {
-  background-color: #f0f4ff; /* Light blue background */
-  color: #6a6eff; /* Blue text */
-  border: 1px solid #dcdffe; /* Subtle border */
+  background-color: #f0f4ff;
+  color: #6a6eff;
+  border: 1px solid rgba(220, 220, 254, 0.5);
 }
 
 .login-btn:hover {
-  background-color: #dcdffe; /* Darker blue on hover */
-  color: #fff; /* White text */
+  background-color: #e2e6ff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(106, 110, 255, 0.3);
 }
 
 .signup-btn {
-  background-color: #6a6eff; /* Primary blue color */
+  background-color: #6a6eff;
   color: white;
-  border: 1px solid #6a6eff; /* Consistent border */
+  border: none;
 }
 
 .signup-btn:hover {
-  background-color: #575be6; /* Slightly darker blue on hover */
+  background-color: #575be6;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(106, 110, 255, 0.4);
 }
 
 /* Icon buttons (Notifications, Profile, Logout) */
 .icon-btn {
-  background-color: #f0f4ff; /* Matches login button style */
+  background-color: #f0f4ff;
   color: #6a6eff;
-  border: 1px solid #dcdffe; /* Subtle border */
-  border-radius: 20px; /* Rounded corners */
-  padding: 8px 12px; /* Consistent padding */
-  font-size: 0.9rem; /* Consistent font size */
+  border: 1px solid rgba(220, 220, 254, 0.5);
+  border-radius: 50px;
+  padding: 10px 18px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease; /* Smooth transitions */
-  display: flex; /* Ensures icon and text are aligned */
-  align-items: center; /* Vertically centers icon and text */
-  gap: 5px; /* Space between icon and text */
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 3px 6px rgba(106, 110, 255, 0.1);
 }
 
 .icon-btn:hover {
-  background-color: #dcdffe; /* Hover effect */
-  color: #fff; /* White text */
+  background-color: #e2e6ff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(106, 110, 255, 0.2);
 }
 
+/* Notification button with badge */
+.notification-btn {
+  padding: 12px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.notification-btn::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff6b6b;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.profile-btn {
+  padding-right: 20px;
+}
+
+/* Logout button */
 .logout-btn {
-  background-color: #ff6b6b; /* Red color for logout */
+  background-color: #ff6b6b;
   color: white;
-  border: 1px solid #ff6b6b; /* Consistent border */
-  border-radius: 20px; /* Rounded corners */
-  padding: 8px 16px; /* Consistent padding */
-  font-size: 0.9rem; /* Consistent font size */
+  border: none;
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.3s ease; /* Smooth transitions */
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 3px 6px rgba(255, 107, 107, 0.2);
+  font-weight: 600;
 }
 
 .logout-btn:hover {
-  background-color: #ff4d4d; /* Darker red on hover */
+  background-color: #ff4d4d;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(255, 107, 107, 0.3);
 }
 
 /* Profile button with username */
-.header-buttons .icon-btn span {
-  font-size: 0.85rem; /* Smaller font size for username */
-  font-weight: 500; /* Bold text */
-  color: #333; /* Dark gray text */
+.header-buttons .profile-btn span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6a6eff;
 }
 
-.header-buttons .icon-btn:hover span {
-  color: #fff; /* White text on hover */
+.header-buttons .profile-btn:hover span {
+  color: #6a6eff;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .header {
+    padding: 12px 30px;
+  }
+  
+  .header-nav {
+    gap: 25px;
+  }
+  
+  .header-logo span {
+    font-size: 1.6rem;
+  }
+  
+  .login-btn,
+  .signup-btn {
+    padding: 10px 18px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    height: auto;
+  }
+
+  .header-nav {
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .header-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1;
+  }
 }

@@ -22,46 +22,43 @@ function Header() {
   const closeSignupPopup = () => setIsSignupPopupOpen(false);
 
   return (
-    <div className="header">
+    <header className="header">
       {/* Logo */}
       <div className="header-logo" onClick={() => navigate("/")}>
         <span>UrbanHelp</span>
       </div>
 
       {/* Navigation Links */}
-      <div className="header-nav">
+      <nav className="header-nav">
         <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
           Home
         </NavLink>
-        <NavLink
-          to="/services"
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
+        <NavLink to="/services" className={({ isActive }) => (isActive ? "active" : "")}>
           Services
         </NavLink>
-        <NavLink
-          to="/aboutus"
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
+        <NavLink to="/aboutus" className={({ isActive }) => (isActive ? "active" : "")}>
           About Us
         </NavLink>
-      </div>
+      </nav>
 
       {/* Header Buttons */}
       <div className="header-buttons">
         {isAuthenticated ? (
           <>
-            <button
-              className="icon-btn"
+            <button 
+              className="icon-btn notification-btn"
               onClick={() => navigate("/notifications")}
             >
               <FontAwesomeIcon icon={faBell} />
             </button>
-            <button className="icon-btn" onClick={() => navigate("/profile")}>
+            <button 
+              className="icon-btn profile-btn" 
+              onClick={() => navigate("/profile")}
+            >
               <FontAwesomeIcon icon={faUser} />
-              <span>{user?.username}</span> {/* Display username */}
+              <span>{user?.username}</span>
             </button>
-            <button
+            <button 
               onClick={() => {
                 logout();
                 navigate("/");
@@ -73,10 +70,10 @@ function Header() {
           </>
         ) : (
           <>
-            <button onClick={openLoginPopup} className="login-btn">
+            <button className="login-btn" onClick={openLoginPopup}>
               Log In
             </button>
-            <button onClick={openSignupPopup} className="signup-btn">
+            <button className="signup-btn" onClick={openSignupPopup}>
               Sign Up
             </button>
           </>
@@ -88,7 +85,7 @@ function Header() {
 
       {/* Render the SignupPopup if isSignupPopupOpen is true */}
       {isSignupPopupOpen && <SignupPopup onClose={closeSignupPopup} />}
-    </div>
+    </header>
   );
 }
 
