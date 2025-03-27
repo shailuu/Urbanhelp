@@ -19,10 +19,11 @@ const Bookings = () => {
 
   // State for form data
   const [formData, setFormData] = useState({
-    clientName: user?.username || "", // Use user's username if available
-    email: user?.email || "", // Use user's email if available
-    phoneNumber: user?.phoneNumber || "", // Use user's phone number if available
-    location: user?.city || "", // Use user's city as location if available
+    clientName: user?.username || "",
+    email: user?.email || "",
+    phoneNumber: user?.phoneNumber || "",
+    location: user?.city || "",
+    address: user?.address || "",
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -31,6 +32,7 @@ const Bookings = () => {
   const [errors, setErrors] = useState({});
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch service details based on ID
   useEffect(() => {
@@ -70,6 +72,9 @@ const Bookings = () => {
       if (!formData.location.trim()) {
         newErrors.location = "Location is required";
       }
+      if (!formData.address.trim()) {
+        newErrors.address = "Address is required";
+      }
     }
     if (currentStep === 2 && !selectedDate) {
       newErrors.date = "Date is required";
@@ -87,7 +92,6 @@ const Bookings = () => {
       ...prevState,
       [name]: value,
     }));
-    // Clear error for the specific field being updated
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: "",
@@ -120,20 +124,40 @@ const Bookings = () => {
     setCurrentStep((prevStep) => prevStep - 1);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      const bookingData = {
-        service: service,
-        serviceId: id,
-        duration: duration,
-        charge: charge,
-        date: selectedDate,
-        time: selectedTime,
-        clientInfo: formData,
-      };
-      console.log("Booking data:", bookingData);
-      alert("Booking submitted successfully! This is a mock submission.");
+    setIsSubmitting(true);
+    
+    const bookingData = {
+      serviceId: id,
+      duration: duration,
+      charge: parseFloat(charge),
+      date: selectedDate.toISOString(),
+      time: selectedTime,
+      clientInfo: formData,
+    };
+
+    try {
+      const response = await fetch("http://localhost:5001/api/bookings/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Booking created successfully:", result);
+      setCurrentStep(4); // Move to success step after successful submission
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+      alert("Failed to submit booking. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -161,6 +185,14 @@ const Bookings = () => {
     );
   }
 
+  // Format date for display
+  const formattedDate = selectedDate?.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
   return (
     <>
       <Header />
@@ -182,6 +214,8 @@ const Bookings = () => {
                     <div className={`step ${currentStep === 4 ? "active" : ""}`}>4</div>
                   </div>
                 </div>
+
+                {/* Step 1: Contact Details */}
                 {currentStep === 1 && (
                   <div className="form-section">
                     <h2>Contact details</h2>
@@ -245,6 +279,20 @@ const Bookings = () => {
                           <span className="error-message">{errors.location}</span>
                         )}
                       </div>
+                      <div className="form-group">
+                        <label>Address</label>
+                        <input
+                          type="text"
+                          name="address"
+                          value={formData.address}
+                          onChange={handleInputChange}
+                          placeholder="Address"
+                          className={errors.address ? "error" : ""}
+                        />
+                        {errors.address && (
+                          <span className="error-message">{errors.address}</span>
+                        )}
+                      </div>
                     </div>
                     <button
                       type="button"
@@ -255,6 +303,8 @@ const Bookings = () => {
                     </button>
                   </div>
                 )}
+
+                {/* Step 2: Date & Time */}
                 {currentStep === 2 && (
                   <div className="form-section">
                     <h2>Date & Time</h2>
@@ -310,17 +360,88 @@ const Bookings = () => {
                       <button
                         type="button"
                         className="next-button"
-                        onClick={handleSubmit}
+                        onClick={handleNextStep}
                       >
-                        Submit Booking
+                        Next step
                       </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 3: Booking Summary */}
+                {currentStep === 3 && (
+                  <div className="form-section">
+                    <h2>Booking Summary</h2>
+                    <p className="form-subtitle">
+                      Please review your booking details before submission.
+                    </p>
+                    
+                    <div className="booking-summary">
+                      <div className="summary-section">
+                        <h3>Service Details</h3>
+                        <p><strong>Service:</strong> {service.title}</p>
+                        <p><strong>Duration:</strong> {duration}</p>
+                        <p><strong>Price:</strong> ${charge}</p>
+                      </div>
+                      
+                      <div className="summary-section">
+                        <h3>Your Information</h3>
+                        <p><strong>Name:</strong> {formData.clientName}</p>
+                        <p><strong>Email:</strong> {formData.email}</p>
+                        <p><strong>Phone:</strong> {formData.phoneNumber}</p>
+                        <p><strong>Location:</strong> {formData.location}</p>
+                        <p><strong>Address:</strong> {formData.address}</p>
+                      </div>
+                      
+                      <div className="summary-section">
+                        <h3>Appointment Details</h3>
+                        <p><strong>Date:</strong> {formattedDate}</p>
+                        <p><strong>Time:</strong> {selectedTime}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="form-navigation">
+                      <button
+                        type="button"
+                        className="previous-button"
+                        onClick={handlePreviousStep}
+                      >
+                        Previous step
+                      </button>
+                      <button
+                        type="button"
+                        className="next-button"
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Submitting..." : "Confirm Booking"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 4: Success Message */}
+                {currentStep === 4 && (
+                  <div className="form-section">
+                    <h2>Booking Successful!</h2>
+                    <div className="success-message">
+                      <p>
+                        Your booking has been successfully placed. You will shortly be notified about
+                        your further booking details. Please wait. Thank you!
+                      </p>
+                      <div className="success-details">
+                        <p><strong>Booking Reference:</strong> #{Math.floor(Math.random() * 1000000)}</p>
+                        <p><strong>Service:</strong> {service.title}</p>
+                        <p><strong>Date:</strong> {formattedDate} at {selectedTime}</p>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
             </div>
           </div>
-          {/* Updated Selected Service Section */}
+          
+          {/* Selected Service Section */}
           <div className="service-selection-container">
             <div className="service-selection-card">
               <h2 className="service-selection-header">Selected Service</h2>

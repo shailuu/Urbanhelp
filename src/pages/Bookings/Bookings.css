@@ -40,7 +40,7 @@
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
-  overflow: hidden;
+  overflow: visible; /* Ensure date picker is not clipped */
 }
 
 .card-content {
@@ -180,6 +180,11 @@
   background-color: #4338ca;
 }
 
+.next-button:disabled {
+  background-color: #a5b4fc;
+  cursor: not-allowed;
+}
+
 .previous-button {
   background-color: #e5e7eb;
   color: #333;
@@ -229,7 +234,8 @@
 }
 
 .react-datepicker-wrapper {
-  width: 100%;
+  width: 100%; /* Ensure full width */
+  position: relative; /* Positioning context for dropdown */
 }
 
 .react-datepicker__input-container input {
@@ -238,8 +244,88 @@
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
   font-size: 14px;
+  box-sizing: border-box; /* Prevent padding from affecting width */
 }
 
+/* Styles for react-datepicker popup */
+.react-datepicker {
+  font-family: inherit; /* Inherit font styles */
+  font-size: 14px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  z-index: 1000; /* Ensure it appears above other elements */
+  position: absolute; /* Ensure proper positioning */
+  top: 100%; /* Position below the input field */
+  left: 0;
+  margin-top: 0.5rem; /* Add spacing between input and popup */
+}
+
+.react-datepicker__header {
+  background-color: #f9fafb; /* Match the background color */
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem;
+  text-align: center;
+}
+
+.react-datepicker__current-month {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day {
+  width: 36px; /* Adjust day cell size */
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  margin: 0.25rem;
+  display: inline-block;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #333;
+}
+
+.react-datepicker__day:hover {
+  background-color: #f3f4f6; /* Hover effect */
+}
+
+.react-datepicker__day--selected {
+  background-color: #4f46e5; /* Selected date color */
+  color: white;
+  border-radius: 50%;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: #4f46e5; /* Keyboard navigation highlight */
+  color: white;
+  border-radius: 50%;
+}
+
+.react-datepicker__day--today {
+  font-weight: bold; /* Highlight today's date */
+}
+
+.react-datepicker__navigation {
+  line-height: 36px; /* Align arrows properly */
+  text-align: center;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.react-datepicker__navigation-icon::before {
+  content: "\2039"; /* Unicode for left arrow */
+  font-size: 16px;
+  color: #333;
+}
+
+.react-datepicker__navigation--next .react-datepicker__navigation-icon::before {
+  content: "\203A"; /* Unicode for right arrow */
+}
+
+/* Time Picker */
 .time-picker select {
   width: 100%;
   padding: 0.75rem;
@@ -248,7 +334,70 @@
   font-size: 14px;
 }
 
-/* New Styles for Selected Service Section */
+/* Booking Summary Styles */
+.booking-summary {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-section {
+  margin-bottom: 1.5rem;
+}
+
+.summary-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summary-section p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.summary-section p strong {
+  color: #333;
+  font-weight: 500;
+  min-width: 80px;
+  display: inline-block;
+}
+
+/* Success Message Styles */
+.success-message {
+  background-color: #b7f9cb;
+  border: 1px solid #186834;
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: #053116;
+  margin-bottom: 1.5rem;
+}
+
+.success-message p {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  color: #333
+}
+
+.success-details {
+  background-color: white;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.success-details p {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+/* Selected Service Section */
 .service-selection-container {
   align-self: flex-start;
   margin-top: 1rem;

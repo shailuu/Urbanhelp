@@ -7,10 +7,40 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return !!localStorage.getItem("token"); // Check if token exists
   });
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null; // Parse stored user data
-  });
+  const [user, setUser] = useState(null); // Initialize user as null
+  const [loading, setLoading] = useState(true); // Add loading state for user data fetching
+
+  // Fetch user profile data from the backend
+  const fetchUserProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setIsAuthenticated(false);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5001/api/auth/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile.");
+      }
+
+      const userData = await response.json();
+      setUser(userData); // Store user data in state
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Login function
   const login = (userData) => {
@@ -30,8 +60,13 @@ export const AuthProvider = ({ children }) => {
     console.log("User logged out. isAuthenticated:", false);
   };
 
+  // Fetch user profile on component mount or when authentication changes
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

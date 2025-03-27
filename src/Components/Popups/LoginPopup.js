@@ -27,35 +27,36 @@ function LoginPopup({ onClose }) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
+  
     try {
       const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      
+  
       const data = await response.json();
-      
+  
       if (!response.ok) {
-        // Check if verification is required (403 status with requiresVerification flag)
         if (response.status === 403 && data.requiresVerification) {
           setShowOTPVerification(true);
           return;
         }
         throw new Error(data.message || "Login failed");
       }
-      
+  
       // Login successful
       login({
         token: data.token,
         username: data.user.username,
         email: data.user.email,
-        id: data.user.id
+        id: data.user.id,
+        isAdmin: data.user.isAdmin, // Ensure this is being passed
       });
-      onClose();
-      navigate("/");
       
+  
+      onClose();
+      navigate(data.user.isAdmin ? "/admin" : "/");
     } catch (error) {
       setError(error.message);
     } finally {
