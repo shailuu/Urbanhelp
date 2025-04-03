@@ -17,14 +17,25 @@ const Bookings = () => {
   // Access the logged-in user's profile from AuthContext
   const { isAuthenticated, user } = useContext(AuthContext);
 
-  // State for form data
   const [formData, setFormData] = useState({
-    clientName: user?.username || "",
-    email: user?.email || "",
-    phoneNumber: user?.phoneNumber || "",
-    location: user?.city || "",
-    address: user?.address || "",
+    clientName: "",
+    email: "",
+    phoneNumber: "",
+    location: "",
+    address: ""
   });
+  
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        clientName: user.username || "",
+        email: user.email || "",
+        phoneNumber: user.phoneNumber || "",
+        location: user.city || "",
+        address: user.address || ""
+      });
+    }
+  }, [user]);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState(null);

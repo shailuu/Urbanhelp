@@ -1,6 +1,6 @@
-import React from 'react';
-import AppRoutes from './routes/Routes';
-import './App.css';
+import React from "react";
+import AppRoutes from "./routes/Routes";
+import "./App.css"; // Keep styles global
 
 function App() {
   return (
