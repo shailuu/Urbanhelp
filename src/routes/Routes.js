@@ -19,6 +19,8 @@ import UsersPage from "../pages/Admin/Users";
 import Contacts from "../pages/Admin/Contacts"; 
 import WorkWithUs from "../pages/Admin/WorkWithUs"; 
 import Layout from "../Components/Admin/Layout";
+import AdminServices from "../pages/Admin/Services";
+import ApprovedWorkers from "../pages/Admin/ApprovedWorkers"; 
 
 function AppRoutes() {
   return (
@@ -75,6 +77,26 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/admin/services"
+  element={
+    <ProtectedRoute>
+      <Layout>
+        <AdminServices />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/admin/approvedworkers"
+  element={
+    <ProtectedRoute>
+      <Layout>
+        <ApprovedWorkers />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
 
         {/* 404 Page */}
         <Route path="*" element={<Error />} />

@@ -1,19 +1,21 @@
-// pages/Contacts.jsx
 import React, { useState, useEffect } from 'react';
-import { getContacts, updateContact, deleteContact } from '../../Services/api'; // Adjusted path
-import DataTable from '../../Components/Admin/Datatable'; // Adjusted path
-import Dialog from '../../Components/Admin/Dialog'; 
+import { getContacts, updateContact, deleteContact, createContact } from '../../Services/api'; // Add createContact if not already
+import DataTable from '../../Components/Admin/Datatable';
+import './Admin.css';
+import './Users.css';
+
 
 const Contacts = () => {
   const [contacts, setContacts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentContact, setCurrentContact] = useState(null);
-  const [formData, setFormData] = useState({
+  const [editingContactId, setEditingContactId] = useState(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [newContactForm, setNewContactForm] = useState({
     name: '',
     email: '',
     message: '',
-    status: '',
+    status: 'new',
   });
 
   const columns = [
@@ -41,134 +43,148 @@ const Contacts = () => {
   }, []);
 
   const handleEdit = (contact) => {
-    setCurrentContact(contact);
+    setEditingContactId(contact._id || contact.id);
     setFormData({
-      name: contact.name,
-      email: contact.email,
-      message: contact.message,
-      status: contact.status,
+      name: contact.name || '',
+      email: contact.email || '',
+      message: contact.message || '',
+      status: contact.status || 'new',
     });
-    setIsDialogOpen(true);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this contact?')) {
       try {
         await deleteContact(id);
-        setContacts(contacts.filter(contact => contact.id !== id));
+        setContacts(contacts.filter((c) => (c._id || c.id) !== id));
       } catch (error) {
         console.error('Error deleting contact:', error);
       }
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e, isNew = false) => {
+    const { name, value } = e.target;
+    if (isNew) {
+      setNewContactForm((prev) => ({ ...prev, [name]: value }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async (id) => {
     try {
-      await updateContact(currentContact.id, formData);
-      setContacts(contacts.map(contact => 
-        contact.id === currentContact.id ? { ...contact, ...formData } : contact
-      ));
-      setIsDialogOpen(false);
+      await updateContact(id, formData);
+      setContacts((prev) =>
+        prev.map((c) => ((c._id || c.id) === id ? { ...c, ...formData } : c))
+      );
+      setEditingContactId(null);
     } catch (error) {
       console.error('Error updating contact:', error);
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const handleCreateContact = async () => {
+    try {
+      const newContact = await createContact(newContactForm);
+      setContacts([newContact, ...contacts]);
+      setNewContactForm({ name: '', email: '', message: '', status: 'new' });
+      setShowCreateForm(false);
+    } catch (error) {
+      console.error('Error creating contact:', error);
+    }
+  };
+
+  const handleCancel = () => setEditingContactId(null);
+
+  if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
-    <div>
-      <div className="page-header">
+    <div className="page-container">
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h1 className="page-title">Contacts</h1>
+        <button className="btn btn-primary" onClick={() => setShowCreateForm(!showCreateForm)}>
+          {showCreateForm ? 'Close Form' : 'Create New Contact'}
+        </button>
       </div>
-      
-      <DataTable 
-        columns={columns} 
-        data={contacts} 
-        onEdit={handleEdit} 
-        onDelete={handleDelete} 
-      />
 
-      <Dialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        title="Edit Contact"
-      >
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
+      {showCreateForm && (
+        <div className="create-user-form">
+          <h3>Create New Contact</h3>
+          <form>
             <input
               type="text"
-              id="name"
               name="name"
-              className="form-control"
-              value={formData.name}
-              onChange={handleChange}
+              value={newContactForm.name}
+              onChange={(e) => handleChange(e, true)}
+              placeholder="Name"
               required
             />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
             <input
               type="email"
-              id="email"
               name="email"
-              className="form-control"
-              value={formData.email}
-              onChange={handleChange}
+              value={newContactForm.email}
+              onChange={(e) => handleChange(e, true)}
+              placeholder="Email"
               required
             />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="message">Message</label>
             <textarea
-              id="message"
               name="message"
-              className="form-control"
-              value={formData.message}
-              onChange={handleChange}
-              rows="4"
+              value={newContactForm.message}
+              onChange={(e) => handleChange(e, true)}
+              placeholder="Message"
+              rows="3"
               required
-            ></textarea>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="status">Status</label>
+            />
             <select
-              id="status"
               name="status"
-              className="form-control"
-              value={formData.status}
-              onChange={handleChange}
+              value={newContactForm.status}
+              onChange={(e) => handleChange(e, true)}
               required
             >
               <option value="new">New</option>
               <option value="in-progress">In Progress</option>
               <option value="resolved">Resolved</option>
             </select>
-          </div>
-
-          <div className="form-actions">
-            <button 
-              type="button" 
-              className="btn btn-secondary" 
-              onClick={() => setIsDialogOpen(false)}
-            >
-              Cancel
+            <button type="button" onClick={handleCreateContact}>
+              Create Contact
             </button>
-            <button type="submit" className="btn btn-primary">Save Changes</button>
-          </div>
-        </form>
-      </Dialog>
+          </form>
+        </div>
+      )}
+
+      <DataTable
+        columns={columns}
+        data={contacts}
+        renderCell={(column, contact) => {
+          const isEditing = editingContactId === (contact._id || contact.id);
+          return isEditing ? (
+            <input
+              type="text"
+              name={column.key}
+              value={formData[column.key] || ''}
+              onChange={(e) => handleChange(e)}
+              className="form-control inline-edit-input"
+            />
+          ) : (
+            contact[column.key]
+          );
+        }}
+        renderActions={(contact) => {
+          const isEditing = editingContactId === (contact._id || contact.id);
+          return isEditing ? (
+            <>
+              <button onClick={() => handleSave(contact._id || contact.id)} className="btn btn-primary btn-sm">Save</button>
+              <button onClick={handleCancel} className="btn btn-secondary btn-sm ml-2">Cancel</button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => handleEdit(contact)} className="btn btn-warning btn-sm">Edit</button>
+              <button onClick={() => handleDelete(contact._id || contact.id)} className="btn btn-danger btn-sm ml-2">Delete</button>
+            </>
+          );
+        }}
+      />
     </div>
   );
 };

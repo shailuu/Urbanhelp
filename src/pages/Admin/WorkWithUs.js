@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { getWorkWithUs, updateWorkWithUs, deleteWorkWithUs } from '../../Services/api'; // Adjusted path
-import DataTable from '../../Components/Admin/Datatable'; // Adjusted path
-import Dialog from '../../Components/Admin/Dialog'; 
+import {
+  getWorkWithUs,
+  createWorkWithUs,
+  updateWorkWithUs,
+  deleteWorkWithUs,
+  approveWorker
+} from '../../Services/api';
+import './Admin.css';
+import './Users.css';
 
 const WorkWithUs = () => {
   const [applications, setApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentApplication, setCurrentApplication] = useState(null);
+  const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
+  const [editApplicationId, setEditApplicationId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,7 +21,7 @@ const WorkWithUs = () => {
     service: '',
     skills: '',
     experience: '',
-    status: '',
+    status: 'new',
   });
 
   const columns = [
@@ -26,6 +32,10 @@ const WorkWithUs = () => {
     { key: 'status', title: 'Status' },
     { key: 'createdAt', title: 'Date' },
   ];
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
 
   const fetchApplications = async () => {
     setIsLoading(true);
@@ -39,49 +49,89 @@ const WorkWithUs = () => {
     }
   };
 
-  useEffect(() => {
-    fetchApplications();
-  }, []);
+  const handleEdit = (applicationId) => {
+    setEditApplicationId(applicationId);
+  };
 
-  const handleEdit = (application) => {
-    setCurrentApplication(application);
-    setFormData({
-      name: application.name,
-      email: application.email,
-      phone: application.phone,
-      service: application.service,
-      skills: application.skills,
-      experience: application.experience,
-      status: application.status,
-    });
-    setIsDialogOpen(true);
+  const handleSave = async (applicationId) => {
+    try {
+      const updatedApplication = applications.find(app => app._id === applicationId);
+      await updateWorkWithUs(applicationId, updatedApplication);
+      setApplications(applications.map(app =>
+        app._id === applicationId ? updatedApplication : app
+      ));
+      setEditApplicationId(null);
+    } catch (error) {
+      console.error('Error updating application:', error);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditApplicationId(null);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this application?')) {
       try {
         await deleteWorkWithUs(id);
-        setApplications(applications.filter(app => app.id !== id));
+        setApplications(applications.filter(app => app._id !== id));
       } catch (error) {
         console.error('Error deleting application:', error);
       }
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleApprove = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/admin/workwithus/${id}/approve`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Approval failed');
+      }
+  
+      // Update the local state to show 'approved'
+      setApplications((prev) =>
+        prev.map((app) =>
+          app._id === id ? { ...app, status: 'Approved' } : app
+        )
+      );
+    } catch (error) {
+      console.error('Error approving application:', error.message);
+      alert('Failed to approve worker');
+    }
+  };
+  
+
+  const handleChange = (e, applicationId) => {
+    const { name, value } = e.target;
+    setApplications(applications.map(app =>
+      app._id === applicationId ? { ...app, [name]: value } : app
+    ));
   };
 
-  const handleSubmit = async (e) => {
+  const handleCreateSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateWorkWithUs(currentApplication._id, formData);
-      setApplications(applications.map(app => 
-        app._id === currentApplication._id ? { ...app, ...formData } : app
-      ));
-      setIsDialogOpen(false);
+      const newApplication = await createWorkWithUs(formData);
+      setApplications([...applications, newApplication]);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        service: '',
+        skills: '',
+        experience: '',
+        status: 'new',
+      });
+      setIsCreateFormVisible(false);
     } catch (error) {
-      console.error('Error updating application:', error);
+      console.error('Error creating application:', error);
     }
   };
 
@@ -90,101 +140,30 @@ const WorkWithUs = () => {
   }
 
   return (
-    <div>
-      <div className="page-header">
+    <div className="page-container">
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h1 className="page-title">Work With Us Applications</h1>
+        <button className="btn btn-primary" onClick={() => setIsCreateFormVisible(!isCreateFormVisible)}>
+          {isCreateFormVisible ? 'Close Form' : 'Create New Application'}
+        </button>
       </div>
-      
-      <DataTable 
-        columns={columns} 
-        data={applications} 
-        onEdit={handleEdit} 
-        onDelete={handleDelete} 
-      />
 
-      <Dialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        title="Edit Application"
-      >
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="form-control"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="form-control"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number</label>
-            <input
-              type="text"
-              id="phone"
-              name="phone"
-              className="form-control"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="service">Service</label>
-            <input
-              type="text"
-              id="service"
-              name="service"
-              className="form-control"
-              value={formData.service}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="skills">Skills</label>
-            <input
-              type="text"
-              id="skills"
-              name="skills"
-              className="form-control"
-              value={formData.skills}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="experience">Experience</label>
-            <input
-              type="text"
-              id="experience"
-              name="experience"
-              className="form-control"
-              value={formData.experience}
-              onChange={handleChange}
-              required
-            />
-          </div>
+      {isCreateFormVisible && (
+        <form className="create-form" onSubmit={handleCreateSubmit}>
+          {['name', 'email', 'phone', 'service', 'skills', 'experience'].map((field) => (
+            <div className="form-group" key={field}>
+              <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+              <input
+                type="text"
+                id={field}
+                name={field}
+                className="form-control"
+                value={formData[field]}
+                onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
+                required
+              />
+            </div>
+          ))}
 
           <div className="form-group">
             <label htmlFor="status">Status</label>
@@ -193,7 +172,7 @@ const WorkWithUs = () => {
               name="status"
               className="form-control"
               value={formData.status}
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
               required
             >
               <option value="new">New</option>
@@ -205,17 +184,75 @@ const WorkWithUs = () => {
           </div>
 
           <div className="form-actions">
-            <button 
-              type="button" 
-              className="btn btn-secondary" 
-              onClick={() => setIsDialogOpen(false)}
-            >
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary">Save Changes</button>
+            <button type="submit" className="btn btn-success">Submit</button>
           </div>
         </form>
-      </Dialog>
+      )}
+
+      <table className="table">
+        <thead>
+          <tr>
+            {columns.map((column) => (
+              <th key={column.key}>{column.title}</th>
+            ))}
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {applications.map((application) => (
+            <tr key={application._id}>
+              {columns.map((column) => (
+                <td key={column.key}>
+                  {editApplicationId === application._id ? (
+                    <input
+                      type="text"
+                      name={column.key}
+                      value={application[column.key]}
+                      onChange={(e) => handleChange(e, application._id)}
+                      className="form-control inline-edit-input"
+                    />
+                  ) : (
+                    application[column.key]
+                  )}
+                </td>
+              ))}
+              <td>
+                {editApplicationId === application._id ? (
+                  <>
+                    <button onClick={() => handleSave(application._id)} className="btn btn-primary btn-sm">Save</button>
+                    <button onClick={handleCancel} className="btn btn-secondary btn-sm ml-2">Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => handleEdit(application._id)} className="btn btn-warning btn-sm">Edit</button>
+                    <button onClick={() => handleDelete(application._id)} className="btn btn-danger btn-sm ml-2">Delete</button>
+                    <select
+  defaultValue=""
+  onChange={(e) => {
+    const value = e.target.value;
+    if (value === "approve") {
+      handleApprove(application._id);
+    }
+  }}
+  style={{
+    padding: '5px 10px',
+    borderRadius: '4px',
+    backgroundColor: '#f0f0f0',
+    color: '#333',
+    border: '1px solid #ccc',
+  }}
+>
+  <option value="" disabled>Select Action</option>
+  <option value="approve" style={{ color: 'green' }}>Approve</option>
+  <option value="disapprove" style={{ color: 'red' }}>Disapprove</option>
+</select>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

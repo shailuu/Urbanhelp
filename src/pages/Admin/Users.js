@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getUsers, updateUser, deleteUser, createUser } from '../../Services/api'; // Adjusted path
-import DataTable from '../../Components/Admin/Datatable'; // Adjusted path
+import { getUsers, updateUser, deleteUser, createUser } from '../../Services/api';
+import DataTable from '../../Components/Admin/Datatable';
 import "./Admin.css";
 import "./Users.css";
 
@@ -9,6 +9,7 @@ const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editingUserId, setEditingUserId] = useState(null);
   const [formData, setFormData] = useState({});
+  const [showCreateForm, setShowCreateForm] = useState(false); // New toggle state
   const [newUserForm, setNewUserForm] = useState({
     username: '',
     email: '',
@@ -17,7 +18,7 @@ const Users = () => {
     dob: '',
     gender: '',
     phoneNumber: '',
-  }); // Store new user data
+  });
 
   const columns = [
     { key: 'username', title: 'Username' },
@@ -33,7 +34,6 @@ const Users = () => {
     setIsLoading(true);
     try {
       const data = await getUsers();
-      console.log("Fetched users data:", data);
       setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -87,8 +87,6 @@ const Users = () => {
 
   const handleSave = async (userId) => {
     try {
-      console.log("Updating user with ID:", userId);
-      console.log("Form Data:", formData);
       await updateUser(userId, formData);
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
@@ -107,7 +105,7 @@ const Users = () => {
 
   const handleCreateUser = async () => {
     try {
-      const newUser = await createUser(newUserForm); // Assuming createUser API function
+      const newUser = await createUser(newUserForm);
       setUsers([newUser, ...users]);
       setNewUserForm({
         username: '',
@@ -117,7 +115,8 @@ const Users = () => {
         dob: '',
         gender: '',
         phoneNumber: '',
-      }); // Reset the form after submission
+      });
+      setShowCreateForm(false);
     } catch (error) {
       console.error("Error creating user:", error);
     }
@@ -131,74 +130,31 @@ const Users = () => {
     <div className="page-container">
       <div className="page-header">
         <h1 className="page-title">Users</h1>
+        <button className="btn-create-user" onClick={() => setShowCreateForm(!showCreateForm)}>
+          {showCreateForm ? 'Close Form' : 'Create New User'}
+        </button>
       </div>
 
-      <div className="create-user-form">
-        <h3>Create New User</h3>
-        <form>
-          <input
-            type="text"
-            name="username"
-            value={newUserForm.username}
-            onChange={(e) => handleChange(e)}
-            placeholder="Username"
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            value={newUserForm.email}
-            onChange={(e) => handleChange(e)}
-            placeholder="Email"
-            required
-          />
-          <input
-            type="text"
-            name="address"
-            value={newUserForm.address}
-            onChange={(e) => handleChange(e)}
-            placeholder="Address"
-            required
-          />
-          <input
-            type="text"
-            name="city"
-            value={newUserForm.city}
-            onChange={(e) => handleChange(e)}
-            placeholder="City"
-            required
-          />
-          <input
-            type="date"
-            name="dob"
-            value={newUserForm.dob}
-            onChange={(e) => handleChange(e)}
-            required
-          />
-          <select
-            name="gender"
-            value={newUserForm.gender}
-            onChange={(e) => handleChange(e)}
-            required
-          >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-          <input
-            type="text"
-            name="phoneNumber"
-            value={newUserForm.phoneNumber}
-            onChange={(e) => handleChange(e)}
-            placeholder="Phone Number"
-            required
-          />
-          <button type="button" onClick={handleCreateUser}>
-            Create User
-          </button>
-        </form>
-      </div>
+      {showCreateForm && (
+        <div className="create-user-form">
+          <h3>Create New User</h3>
+          <form>
+            <input type="text" name="username" value={newUserForm.username} onChange={handleChange} placeholder="Username" required />
+            <input type="email" name="email" value={newUserForm.email} onChange={handleChange} placeholder="Email" required />
+            <input type="text" name="address" value={newUserForm.address} onChange={handleChange} placeholder="Address" required />
+            <input type="text" name="city" value={newUserForm.city} onChange={handleChange} placeholder="City" required />
+            <input type="date" name="dob" value={newUserForm.dob} onChange={handleChange} required />
+            <select name="gender" value={newUserForm.gender} onChange={handleChange} required>
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="text" name="phoneNumber" value={newUserForm.phoneNumber} onChange={handleChange} placeholder="Phone Number" required />
+            <button type="button" onClick={handleCreateUser}>Create User</button>
+          </form>
+        </div>
+      )}
 
       <DataTable
         columns={columns}
@@ -219,36 +175,15 @@ const Users = () => {
         }}
         renderActions={(user) => {
           const isEditing = editingUserId === (user._id || user.id);
-
           return isEditing ? (
             <>
-              <button
-                onClick={() => handleSave(user._id || user.id)}
-                className="btn btn-primary btn-sm"
-              >
-                Save
-              </button>
-              <button
-                onClick={handleCancel}
-                className="btn btn-secondary btn-sm ml-2"
-              >
-                Cancel
-              </button>
+              <button onClick={() => handleSave(user._id || user.id)} className="btn btn-primary btn-sm">Save</button>
+              <button onClick={handleCancel} className="btn btn-secondary btn-sm ml-2">Cancel</button>
             </>
           ) : (
             <>
-              <button
-                onClick={() => handleEdit(user)}
-                className="btn btn-warning btn-sm"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(user._id || user.id)}
-                className="btn btn-danger btn-sm ml-2"
-              >
-                Delete
-              </button>
+              <button onClick={() => handleEdit(user)} className="btn btn-warning btn-sm">Edit</button>
+              <button onClick={() => handleDelete(user._id || user.id)} className="btn btn-danger btn-sm ml-2">Delete</button>
             </>
           );
         }}

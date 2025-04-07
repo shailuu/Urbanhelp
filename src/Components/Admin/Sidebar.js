@@ -27,6 +27,13 @@ const Sidebar = () => {
         <NavLink to="/admin/workwithus" className="sidebar-item">
           Work With Us
         </NavLink>
+        <NavLink to="/admin/approvedworkers" className="sidebar-item">
+          Approved Workers
+        </NavLink>
+        <NavLink to="/admin/services" className="sidebar-item">
+          Services
+        </NavLink>
+
       </nav>
       <button className="sidebar-logout" onClick={handleLogout}>
         Logout

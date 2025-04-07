@@ -1,72 +1,77 @@
-/* Loading State */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 20px;
-  color: #2c3e50;
-  font-weight: bold;
-}
-
-/* Page Container */
+/* Container for the whole page */
 .page-container {
   padding: 20px;
-  background-color: #f4f7fc;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
+/* Header with title and button */
 .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
 }
 
+/* Page title */
 .page-title {
-  font-size: 28px;
-  color: #2c3e50;
+  font-size: 24px;
   font-weight: bold;
+  color: #333;
 }
 
-/* Create User Form */
+/* Top-right button to toggle form */
+.btn-create-user {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-create-user:hover {
+  background-color: #27ae60;
+}
+
+/* Form container */
 .create-user-form {
-  background-color: white;
-  padding: 30px;
+  background-color: #fff;
+  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .create-user-form h3 {
-  font-size: 24px;
-  color: #2c3e50;
-  margin-bottom: 20px;
-  text-align: center;
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #444;
 }
 
-.create-user-form form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
+/* Form inputs */
 .create-user-form input,
-.create-user-form select,
-.create-user-form button {
+.create-user-form select {
+  display: block;
   width: 100%;
-  padding: 12px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
+  padding: 10px 12px;
+  margin-bottom: 12px;
   font-size: 14px;
-}
-
-.create-user-form input:focus,
-.create-user-form select:focus {
-  border-color: #3498db;
-  outline: none;
-  box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 .create-user-form button {
   background-color: #3498db;
   color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -75,122 +80,79 @@
   background-color: #2980b9;
 }
 
-/* Data Table */
-.data-table {
+/* Inline edit input style */
+.inline-edit-input {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background-color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 6px;
   font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 
+/* Table adjustments if needed (optional) */
 .data-table th,
 .data-table td {
-  padding: 15px;
+  padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.data-table th {
-  background-color: #2c3e50;
-  color: white;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.data-table tr:hover {
-  background-color: #f9f9f9;
-}
-
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  gap: 15px;
 }
 
 .btn {
-  padding: 8px 16px;
-  border: none;
+  padding: 6px 12px;
   border-radius: 4px;
+  border: none;
+  font-size: 13px;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-  white-space: nowrap;
 }
 
-.btn-edit {
-  background-color: #3498db;
-  color: white;
-}
-
-.btn-delete {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.btn-edit:hover {
-  background-color: #2980b9;
-}
-
-.btn-delete:hover {
-  background-color: #c0392b;
-}
-
-/* Save and Cancel Buttons */
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-}
-
-.btn-secondary {
-  background-color: #bdc3c7;
-  color: white;
+.btn-sm {
+  font-size: 13px;
+  padding: 5px 10px;
 }
 
 .btn-primary {
-  background-color: #3498db;
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
   color: white;
 }
 
 .btn-secondary:hover {
-  background-color: #95a5a6;
+  background-color: #5a6268;
 }
 
-.btn-primary:hover {
-  background-color: #2980b9;
+.btn-warning {
+  background-color: #f39c12;
+  color: white;
 }
 
-/* Form Fields */
-.form-control {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  font-size: 14px;
+.btn-warning:hover {
+  background-color: #e67e22;
 }
 
-.form-control:focus {
-  border-color: #3498db;
-  outline: none;
-  box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
 }
 
-/* User Create / Edit Form */
-.user-form {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+.btn-danger:hover {
+  background-color: #c0392b;
 }
 
-.user-form h2 {
-  font-size: 20px;
-  color: #2c3e50;
-  margin-bottom: 20px;
+.ml-2 {
+  margin-left: 8px;
+}
+
+/* Loading state */
+.loading {
   text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #666;
 }

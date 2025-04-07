@@ -1,4 +1,3 @@
-// services/api.js
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
@@ -52,11 +51,10 @@ export const deleteUser = async (id) => {
   return response.data;
 };
 
-// Create User
 export const createUser = async (userData) => {
   try {
     const response = await apiClient.post('/admin/users', userData);
-    return response.data; // Return the newly created user data
+    return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error creating user' };
   }
@@ -78,6 +76,16 @@ export const deleteContact = async (id) => {
   return response.data;
 };
 
+// ✅ New: Create Contact
+export const createContact = async (contactData) => {
+  try {
+    const response = await apiClient.post('/admin/contacts', contactData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error creating contact' };
+  }
+};
+
 // Work With Us
 export const getWorkWithUs = async () => {
   const response = await apiClient.get('/admin/workwithus');
@@ -91,5 +99,65 @@ export const updateWorkWithUs = async (id, applicationData) => {
 
 export const deleteWorkWithUs = async (id) => {
   const response = await apiClient.delete(`/admin/workwithus/${id}`);
+  return response.data;
+};
+
+export const createWorkWithUs = async (applicationData) => {
+  const response = await apiClient.post('/admin/workwithus', applicationData);
+  return response.data;
+};
+
+// ✅ New: Approve Worker (Change status to 'accepted')
+export const approveWorker = async (id) => {
+  try {
+    const response = await apiClient.patch(`/admin/workwithus/${id}/approve`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error approving worker' };
+  }
+};
+
+// Services
+export const getServices = async () => {
+  const response = await apiClient.get('/admin/services');
+  return response.data;
+};
+
+export const createService = async (serviceData) => {
+  try {
+    const response = await apiClient.post('/admin/services', serviceData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error creating service' };
+  }
+};
+
+export const updateService = async (id, serviceData) => {
+  const response = await apiClient.put(`/admin/services/${id}`, serviceData);
+  return response.data;
+};
+
+export const deleteService = async (id) => {
+  const response = await apiClient.delete(`/admin/services/${id}`);
+  return response.data;
+};
+
+export const getApprovedWorkers = async () => {
+  const response = await apiClient.get('/admin/approved-workers');
+  return response.data;
+};
+
+export const createApprovedWorker = async (workerData) => {
+  const response = await apiClient.post('/admin/approved-workers', workerData);
+  return response.data;
+};
+
+export const updateApprovedWorker = async (id, workerData) => {
+  const response = await apiClient.put(`/admin/approved-workers/${id}`, workerData);
+  return response.data;
+};
+
+export const deleteApprovedWorker = async (id) => {
+  const response = await apiClient.delete(`/admin/approved-workers/${id}`);
   return response.data;
 };
