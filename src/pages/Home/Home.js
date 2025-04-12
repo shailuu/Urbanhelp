@@ -93,14 +93,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="testimonial-section">
-        <div className="testimonial-card">
-          <p>
-            "UrbanHelp has been a lifesaver for me! The service is reliable and the staff is incredibly professional."
-          </p>
-          <span>— Smriti Shakya, Software Engineer</span>
-        </div>
-      </section>
+      
 
       <Footer />
     </div>

@@ -20,6 +20,8 @@ const Services = () => {
     additionalDetails: '',
     durations: [{ duration: '', charge: '' }],
   });
+  // New state to properly handle editing service durations
+  const [editingService, setEditingService] = useState(null);
 
   const columns = [
     { key: 'title', title: 'Title' },
@@ -45,21 +47,65 @@ const Services = () => {
     fetchServices();
   }, []);
 
-  const handleEdit = (id) => setEditServiceId(id);
-  const handleCancel = () => setEditServiceId(null);
+  const handleEdit = (id) => {
+    const serviceToEdit = services.find(service => service._id === id);
+    // Create a deep copy to avoid direct state mutation
+    setEditingService(JSON.parse(JSON.stringify(serviceToEdit)));
+    setEditServiceId(id);
+  };
+  
+  const handleCancel = () => {
+    setEditServiceId(null);
+    setEditingService(null);
+  };
 
-  const handleChange = (e, id) => {
+  const handleChange = (e, field) => {
     const { name, value } = e.target;
-    setServices(services.map(service =>
-      service._id === id ? { ...service, [name]: value } : service
-    ));
+    setEditingService(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Handle duration changes when editing
+  const handleEditDurationChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedDurations = [...editingService.durations];
+    updatedDurations[index][name] = value;
+    setEditingService({
+      ...editingService,
+      durations: updatedDurations
+    });
+  };
+
+  // Add a duration field when editing
+  const handleAddEditDuration = () => {
+    setEditingService({
+      ...editingService,
+      durations: [...editingService.durations, { duration: '', charge: '' }]
+    });
+  };
+
+  // Remove a duration field when editing
+  const handleRemoveEditDuration = (index) => {
+    if (editingService.durations.length > 1) {
+      const updatedDurations = [...editingService.durations];
+      updatedDurations.splice(index, 1);
+      setEditingService({
+        ...editingService,
+        durations: updatedDurations
+      });
+    }
   };
 
   const handleSave = async (id) => {
     try {
-      const updatedService = services.find(service => service._id === id);
-      await updateService(id, updatedService);
+      await updateService(id, editingService);
+      setServices(services.map(service =>
+        service._id === id ? editingService : service
+      ));
       setEditServiceId(null);
+      setEditingService(null);
     } catch (error) {
       console.error('Error updating service:', error);
     }
@@ -90,6 +136,14 @@ const Services = () => {
 
   const addDurationField = () => {
     setFormData({ ...formData, durations: [...formData.durations, { duration: '', charge: '' }] });
+  };
+
+  const removeDurationField = (index) => {
+    if (formData.durations.length > 1) {
+      const updatedDurations = [...formData.durations];
+      updatedDurations.splice(index, 1);
+      setFormData({ ...formData, durations: updatedDurations });
+    }
   };
 
   const handleCreateSubmit = async (e) => {
@@ -138,32 +192,54 @@ const Services = () => {
             </div>
           ))}
 
-          <label>Durations</label>
-          {formData.durations.map((item, index) => (
-            <div className="form-group" key={index} style={{ display: 'flex', gap: '10px' }}>
-              <input
-                type="text"
-                name="duration"
-                placeholder="Duration"
-                value={item.duration}
-                onChange={(e) => handleDurationChange(index, e)}
-                className="form-control"
-                required
-              />
-              <input
-                type="number"
-                name="charge"
-                placeholder="Charge"
-                value={item.charge}
-                onChange={(e) => handleDurationChange(index, e)}
-                className="form-control"
-                required
-              />
+          <div className="form-group">
+            <label>Durations and Pricing</label>
+            <div className="durations-container">
+              {formData.durations.map((item, index) => (
+                <div className="duration-row" key={index} style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                  <input
+                    type="text"
+                    name="duration"
+                    placeholder="Duration (e.g., 30 min, 1 hour)"
+                    value={item.duration}
+                    onChange={(e) => handleDurationChange(index, e)}
+                    className="form-control"
+                    style={{ flex: 1 }}
+                    required
+                  />
+                  <input
+                    type="number"
+                    name="charge"
+                    placeholder="Price ($)"
+                    value={item.charge}
+                    onChange={(e) => handleDurationChange(index, e)}
+                    className="form-control"
+                    style={{ flex: 1 }}
+                    required
+                  />
+                  {formData.durations.length > 1 && (
+                    <button 
+                      type="button" 
+                      className="btn btn-danger btn-sm"
+                      onClick={() => removeDurationField(index)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button 
+                type="button" 
+                className="btn btn-secondary btn-sm" 
+                onClick={addDurationField}
+                style={{ marginTop: '10px' }}
+              >
+                Add Duration Option
+              </button>
             </div>
-          ))}
-          <button type="button" className="btn btn-secondary btn-sm" onClick={addDurationField}>Add More</button>
+          </div>
 
-          <div className="form-actions">
+          <div className="form-actions" style={{ marginTop: '20px' }}>
             <button type="submit" className="btn btn-success">Submit</button>
           </div>
         </form>
@@ -182,39 +258,84 @@ const Services = () => {
               {columns.map(col => (
                 <td key={col.key}>
                   {editServiceId === service._id ? (
-                    <input
-                      type="text"
-                      name={col.key}
-                      value={service[col.key]}
-                      onChange={(e) => handleChange(e, service._id)}
-                      className="form-control inline-edit-input"
-                    />
+                    col.key === 'durations' ? (
+                      <div className="edit-durations">
+                        {editingService.durations.map((item, index) => (
+                          <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                            <input
+                              type="text"
+                              name="duration"
+                              placeholder="Duration"
+                              value={item.duration}
+                              onChange={(e) => handleEditDurationChange(index, e)}
+                              className="form-control"
+                              style={{ width: '120px' }}
+                            />
+                            <input
+                              type="number"
+                              name="charge"
+                              placeholder="Price"
+                              value={item.charge}
+                              onChange={(e) => handleEditDurationChange(index, e)}
+                              className="form-control"
+                              style={{ width: '80px' }}
+                            />
+                            {editingService.durations.length > 1 && (
+                              <button
+                                type="button"
+                                className="btn btn-danger btn-sm"
+                                onClick={() => handleRemoveEditDuration(index)}
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          className="btn btn-secondary btn-sm"
+                          onClick={handleAddEditDuration}
+                        >
+                          + Add Option
+                        </button>
+                      </div>
+                    ) : (
+                      <input
+                        type="text"
+                        name={col.key}
+                        value={editingService[col.key]}
+                        onChange={handleChange}
+                        className="form-control inline-edit-input"
+                      />
+                    )
                   ) : col.key === 'durations' ? (
                     // Ensure durations is an array before mapping
                     Array.isArray(service[col.key]) && service[col.key].length > 0 ? (
-                      service[col.key].map((item, index) => (
-                        <div key={index}>
-                          {`${item.duration} - $${item.charge}`}
-                        </div>
-                      ))
+                      <div>
+                        {service[col.key].map((item, index) => (
+                          <div key={index} style={{ marginBottom: '4px' }}>
+                            <span style={{ fontWeight: 'bold' }}>{item.duration}</span> - <span style={{ color: '#0d6efd' }}>${item.charge}</span>
+                          </div>
+                        ))}
+                      </div>
                     ) : (
-                      <span>No durations available</span>
+                      <span style={{ color: '#6c757d' }}>No durations available</span>
                     )
                   ) : (
                     service[col.key]
                   )}
                 </td>
               ))}
-              <td>
+              <td style={{ whiteSpace: 'nowrap' }}>
                 {editServiceId === service._id ? (
                   <>
                     <button onClick={() => handleSave(service._id)} className="btn btn-primary btn-sm">Save</button>
-                    <button onClick={handleCancel} className="btn btn-secondary btn-sm ml-2">Cancel</button>
+                    <button onClick={handleCancel} className="btn btn-secondary btn-sm" style={{ marginLeft: '8px' }}>Cancel</button>
                   </>
                 ) : (
                   <>
                     <button onClick={() => handleEdit(service._id)} className="btn btn-warning btn-sm">Edit</button>
-                    <button onClick={() => handleDelete(service._id)} className="btn btn-danger btn-sm ml-2">Delete</button>
+                    <button onClick={() => handleDelete(service._id)} className="btn btn-danger btn-sm" style={{ marginLeft: '8px' }}>Delete</button>
                   </>
                 )}
               </td>

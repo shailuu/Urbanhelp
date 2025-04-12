@@ -137,40 +137,57 @@ const Bookings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      setIsSubmitting(false);
+      return;
+    }
+  
+    if (!duration || !charge) {
+      alert("Invalid booking details. Duration or charge is missing.");
+      return;
+    }
+  
+    if (!selectedDate) {
+      alert("Please select a booking date.");
+      return;
+    }
+  
     setIsSubmitting(true);
-    
+  
     const bookingData = {
-      serviceId: id,
-      duration: duration,
+      service: id,
+      duration,
       charge: parseFloat(charge),
       date: selectedDate.toISOString(),
       time: selectedTime,
       clientInfo: formData,
     };
-
+  
     try {
-      const response = await fetch("http://localhost:5001/api/bookings/bookings", {
+      const response = await fetch("http://localhost:5001/api/bookings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(bookingData),
       });
-
+  
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`HTTP error! Status: ${response.status}. ${errorText}`);
       }
-
+  
       const result = await response.json();
       console.log("Booking created successfully:", result);
       setCurrentStep(4); // Move to success step after successful submission
     } catch (error) {
       console.error("Error submitting booking:", error);
-      alert("Failed to submit booking. Please try again.");
+      alert("Failed to submit booking. Please check all inputs and try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
+  
 
   if (loading) {
     return (

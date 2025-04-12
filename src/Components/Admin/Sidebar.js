@@ -33,7 +33,9 @@ const Sidebar = () => {
         <NavLink to="/admin/services" className="sidebar-item">
           Services
         </NavLink>
-
+        <NavLink to="/admin/bookings" className="sidebar-item">
+          Bookings
+        </NavLink>
       </nav>
       <button className="sidebar-logout" onClick={handleLogout}>
         Logout

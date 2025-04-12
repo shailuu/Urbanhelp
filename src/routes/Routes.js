@@ -12,6 +12,10 @@ import Profile from "../pages/Profile/Profile";
 import Bookings from "../pages/Bookings/Bookings";
 import Error from "../pages/Error/Error";
 import ServiceDetail from "../pages/Services/ServiceDetail";
+//import Notifications from "../Components/Notifications";
+
+
+
 
 // Admin Panel
 import AdminDashboard from "../pages/Admin/AdminDashboard";
@@ -21,6 +25,7 @@ import WorkWithUs from "../pages/Admin/WorkWithUs";
 import Layout from "../Components/Admin/Layout";
 import AdminServices from "../pages/Admin/Services";
 import ApprovedWorkers from "../pages/Admin/ApprovedWorkers"; 
+import AdminBookings from "../pages/Admin/Bookings"; // Renamed import for bookings
 
 function AppRoutes() {
   return (
@@ -35,6 +40,7 @@ function AppRoutes() {
         <Route path="/services/:id" element={<ServiceDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking/:id" element={<Bookings />} />
+        {/* <Route path="/notifications" element={<Notifications />} /> */}
 
         {/* Admin Panel Routes - Protected */}
         <Route
@@ -78,25 +84,35 @@ function AppRoutes() {
           }
         />
         <Route
-  path="/admin/services"
-  element={
-    <ProtectedRoute>
-      <Layout>
-        <AdminServices />
-      </Layout>
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/admin/approvedworkers"
-  element={
-    <ProtectedRoute>
-      <Layout>
-        <ApprovedWorkers />
-      </Layout>
-    </ProtectedRoute>
-  }
-/>
+          path="/admin/services"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AdminServices />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/approvedworkers"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ApprovedWorkers />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/bookings"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AdminBookings /> {/* Updated to use renamed import */}
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
 
         {/* 404 Page */}
         <Route path="*" element={<Error />} />

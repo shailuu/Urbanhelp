@@ -76,7 +76,6 @@ export const deleteContact = async (id) => {
   return response.data;
 };
 
-// ✅ New: Create Contact
 export const createContact = async (contactData) => {
   try {
     const response = await apiClient.post('/admin/contacts', contactData);
@@ -107,10 +106,9 @@ export const createWorkWithUs = async (applicationData) => {
   return response.data;
 };
 
-// ✅ New: Approve Worker (Change status to 'accepted')
 export const approveWorker = async (id) => {
   try {
-    const response = await apiClient.patch(`/admin/workwithus/${id}/approve`);
+    const response = await apiClient.post(`/admin/workwithus/${id}/approve`);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error approving worker' };
@@ -142,9 +140,14 @@ export const deleteService = async (id) => {
   return response.data;
 };
 
+// Approved Workers
 export const getApprovedWorkers = async () => {
-  const response = await apiClient.get('/admin/approved-workers');
-  return response.data;
+  try {
+    const response = await apiClient.get('/admin/approved-workers');
+    return response.data.workers || response.data; // Handle both response structures
+  } catch (error) {
+    throw error.response?.data || { message: 'Error fetching approved workers' };
+  }
 };
 
 export const createApprovedWorker = async (workerData) => {
@@ -160,4 +163,98 @@ export const updateApprovedWorker = async (id, workerData) => {
 export const deleteApprovedWorker = async (id) => {
   const response = await apiClient.delete(`/admin/approved-workers/${id}`);
   return response.data;
+};
+
+// Bookings
+export const getAllBookings = async () => {
+  try {
+    const response = await apiClient.get('/admin/bookings');
+    return response.data.bookings || response.data; // Handle both response structures
+  } catch (error) {
+    throw error.response?.data || { message: 'Error fetching bookings' };
+  }
+};
+
+export const getApprovedBookings = async () => {
+  try {
+    const response = await apiClient.get('/admin/approved-bookings');
+    return response.data.approvedBookings || response.data; // Handle both response structures
+  } catch (error) {
+    throw error.response?.data || { message: 'Error fetching approved bookings' };
+  }
+};
+
+export const approveBooking = async (id, data) => {
+  try {
+    // Updated to send the worker ID in the request body
+    const response = await apiClient.post(`/admin/bookings/${id}/approve`, data);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error approving booking' };
+  }
+};
+
+export const disapproveBooking = async (id) => {
+  try {
+    const response = await apiClient.post(`/admin/bookings/${id}/disapprove`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error disapproving booking' };
+  }
+};
+
+export const deleteBooking = async (id) => {
+  try {
+    const response = await apiClient.delete(`/admin/bookings/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error deleting booking' };
+  }
+};
+
+export const updateBooking = async (id, bookingData) => {
+  try {
+    const response = await apiClient.put(`/admin/bookings/${id}`, bookingData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error updating booking' };
+  }
+};
+
+
+// Notifications
+export const getNotifications = async (userEmail) => {
+  try {
+    const response = await apiClient.get(`/notifications?userEmail=${userEmail}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error fetching notifications' };
+  }
+};
+
+export const markNotificationAsRead = async (notificationId) => {
+  try {
+    const response = await apiClient.put(`/notifications/${notificationId}/read`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error marking notification as read' };
+  }
+};
+
+export const markAllNotificationsAsRead = async (userEmail) => {
+  try {
+    const response = await apiClient.put(`/notifications/mark-all-read?userEmail=${userEmail}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error marking all notifications as read' };
+  }
+};
+
+export const deleteNotification = async (notificationId) => {
+  try {
+    const response = await apiClient.delete(`/notifications/${notificationId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error deleting notification' };
+  }
 };

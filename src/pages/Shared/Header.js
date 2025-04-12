@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from "react"; // Add 'useState' here
 import { NavLink, useNavigate } from "react-router-dom";
 import "./Header.css";
 import { AuthContext } from "../../context/AuthContext";
@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBell, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import LoginPopup from "../../Components/Popups/LoginPopup";
 import SignupPopup from "../../Components/Popups/SignupPopup";
+import Notifications from "../../Components/Notifications"; // Import the Notifications component
 
 function Header() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
@@ -45,20 +46,20 @@ function Header() {
       <div className="header-buttons">
         {isAuthenticated ? (
           <>
-            <button 
-              className="icon-btn notification-btn"
-              onClick={() => navigate("/notifications")}
-            >
-              <FontAwesomeIcon icon={faBell} />
-            </button>
-            <button 
-              className="icon-btn profile-btn" 
+            {/* Notifications Dropdown */}
+            <Notifications userEmail={user?.email} />
+
+            {/* Profile Button */}
+            <button
+              className="icon-btn profile-btn"
               onClick={() => navigate("/profile")}
             >
               <FontAwesomeIcon icon={faUser} />
               <span>{user?.username}</span>
             </button>
-            <button 
+
+            {/* Logout Button */}
+            <button
               onClick={() => {
                 logout();
                 navigate("/");
@@ -70,6 +71,7 @@ function Header() {
           </>
         ) : (
           <>
+            {/* Login and Signup Buttons */}
             <button className="login-btn" onClick={openLoginPopup}>
               Log In
             </button>
