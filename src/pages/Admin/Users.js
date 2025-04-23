@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getUsers, updateUser, deleteUser, createUser } from '../../Services/api';
+import { getUsers, updateUser, deleteUser } from '../../Services/api';
 import DataTable from '../../Components/Admin/Datatable';
 import "./Admin.css";
 import "./Users.css";
@@ -9,16 +9,6 @@ const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [editingUserId, setEditingUserId] = useState(null);
   const [formData, setFormData] = useState({});
-  const [showCreateForm, setShowCreateForm] = useState(false); // New toggle state
-  const [newUserForm, setNewUserForm] = useState({
-    username: '',
-    email: '',
-    address: '',
-    city: '',
-    dob: '',
-    gender: '',
-    phoneNumber: '',
-  });
 
   const columns = [
     { key: 'username', title: 'Username' },
@@ -70,19 +60,12 @@ const Users = () => {
     }
   };
 
-  const handleChange = (e, userId) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    if (userId) {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    } else {
-      setNewUserForm((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleSave = async (userId) => {
@@ -103,25 +86,6 @@ const Users = () => {
     setEditingUserId(null);
   };
 
-  const handleCreateUser = async () => {
-    try {
-      const newUser = await createUser(newUserForm);
-      setUsers([newUser, ...users]);
-      setNewUserForm({
-        username: '',
-        email: '',
-        address: '',
-        city: '',
-        dob: '',
-        gender: '',
-        phoneNumber: '',
-      });
-      setShowCreateForm(false);
-    } catch (error) {
-      console.error("Error creating user:", error);
-    }
-  };
-
   if (isLoading) {
     return <div className="loading">Loading...</div>;
   }
@@ -130,31 +94,7 @@ const Users = () => {
     <div className="page-container">
       <div className="page-header">
         <h1 className="page-title">Users</h1>
-        <button className="btn-create-user" onClick={() => setShowCreateForm(!showCreateForm)}>
-          {showCreateForm ? 'Close Form' : 'Create New User'}
-        </button>
       </div>
-
-      {showCreateForm && (
-        <div className="create-user-form">
-          <h3>Create New User</h3>
-          <form>
-            <input type="text" name="username" value={newUserForm.username} onChange={handleChange} placeholder="Username" required />
-            <input type="email" name="email" value={newUserForm.email} onChange={handleChange} placeholder="Email" required />
-            <input type="text" name="address" value={newUserForm.address} onChange={handleChange} placeholder="Address" required />
-            <input type="text" name="city" value={newUserForm.city} onChange={handleChange} placeholder="City" required />
-            <input type="date" name="dob" value={newUserForm.dob} onChange={handleChange} required />
-            <select name="gender" value={newUserForm.gender} onChange={handleChange} required>
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-            <input type="text" name="phoneNumber" value={newUserForm.phoneNumber} onChange={handleChange} placeholder="Phone Number" required />
-            <button type="button" onClick={handleCreateUser}>Create User</button>
-          </form>
-        </div>
-      )}
 
       <DataTable
         columns={columns}
@@ -166,7 +106,7 @@ const Users = () => {
               type="text"
               name={column.key}
               value={formData[column.key] || ''}
-              onChange={(e) => handleChange(e, user._id || user.id)}
+              onChange={handleChange}
               className="form-control inline-edit-input"
             />
           ) : (

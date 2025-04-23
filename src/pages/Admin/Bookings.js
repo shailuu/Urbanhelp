@@ -416,7 +416,7 @@ const Bookings = () => {
               <div>{selectedBooking.time}</div>
               
               <div style={{ fontWeight: 'bold' }}>Duration:</div>
-              <div>{selectedBooking.duration} minutes</div>
+              <div>{selectedBooking.duration} </div>
               
               <div style={{ fontWeight: 'bold' }}>Status:</div>
               <div>{selectedBooking.isApproved ? 'Approved' : 'Pending'}</div>
@@ -437,17 +437,20 @@ const Bookings = () => {
                 fontSize: '16px' 
               }}>
                 <div style={{ fontWeight: 'bold' }}>Name:</div>
-                <div>{selectedBooking.clientInfo?.name}</div>
-                
-                <div style={{ fontWeight: 'bold' }}>Email:</div>
-                <div>{selectedBooking.clientInfo?.email}</div>
-                
-                <div style={{ fontWeight: 'bold' }}>Phone:</div>
-                <div>{selectedBooking.clientInfo?.phone}</div>
-                
-                <div style={{ fontWeight: 'bold' }}>Address:</div>
-                <div>{selectedBooking.clientInfo?.address}</div>
-              </div>
+    <div>{selectedBooking.clientInfo?.name}</div>
+
+    <div style={{ fontWeight: 'bold' }}>Email:</div>
+    <div>{selectedBooking.clientInfo?.email}</div>
+
+    <div style={{ fontWeight: 'bold' }}>Phone Number:</div>
+    <div>{selectedBooking.clientInfo?.phoneNumber}</div>
+
+    <div style={{ fontWeight: 'bold' }}>Location:</div>
+    <div>{selectedBooking.clientInfo?.location}</div>
+
+    <div style={{ fontWeight: 'bold' }}>Address:</div>
+    <div>{selectedBooking.clientInfo?.address}</div>
+  </div>
             </div>
             
             <div style={{ marginTop: '20px', textAlign: 'right' }}>

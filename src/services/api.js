@@ -123,7 +123,14 @@ export const getServices = async () => {
 
 export const createService = async (serviceData) => {
   try {
-    const response = await apiClient.post('/admin/services', serviceData);
+    // When serviceData is FormData, axios will automatically 
+    // set the correct Content-Type header with boundary
+    const response = await apiClient.post('/admin/services', serviceData, {
+      headers: {
+        // Don't set Content-Type when sending FormData - axios will set it correctly
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error creating service' };
@@ -131,8 +138,19 @@ export const createService = async (serviceData) => {
 };
 
 export const updateService = async (id, serviceData) => {
-  const response = await apiClient.put(`/admin/services/${id}`, serviceData);
-  return response.data;
+  try {
+    // Check if serviceData is FormData (for image uploads)
+    const isFormData = serviceData instanceof FormData;
+    
+    const response = await apiClient.put(`/admin/services/${id}`, serviceData, {
+      headers: isFormData ? {
+        'Content-Type': 'multipart/form-data'
+      } : undefined
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error updating service' };
+  }
 };
 
 export const deleteService = async (id) => {

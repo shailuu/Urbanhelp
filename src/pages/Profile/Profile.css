@@ -390,3 +390,23 @@ select.form-input {
 .profile-image-container {
   animation: pulse 2s infinite;
 }
+/* Profile Image Container */
+.profile-image-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+  display: flex; /* Added to center the icon */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  background-color: #f8fafc; /* Background color for the circle */
+}
+
+/* User Icon */
+.user-icon {
+  font-size: 48px; /* Adjust size as needed */
+  color: #6b7280; /* Grayish color for the icon */
+}

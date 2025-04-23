@@ -1,106 +1,136 @@
 /* Popup overlay styling */
 .popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Dark overlay */
-    backdrop-filter: blur(5px); /* Blurred background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  /* Popup content container */
-  .popup-content {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 10px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    position: relative;
-  }
-  
-  /* Close button (×) */
-  .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 1.5rem;
-    border: none;
-    background: none;
-    cursor: pointer;
-  }
-  
-  /* Header and description */
-  .popup-content h1 {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-  
-  .popup-content p {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  /* Form container */
-  .login-form {
-    width: 100%;
-    max-width: 100%;
-    margin: auto;
-  }
-  
-  /* Input groups for each form element */
-  .input-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-  }
-  
-  .input-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    background-color: #f9f9f9;
-    color: #666;
-    font-size: 1.2rem;
-    pointer-events: none;
-  }
-  
-  .input-group input {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    border-radius: 0;
-  }
-  
-  /* Submit button for the popup */
-  .login-btn {
-    width: 100%;
-    padding: 10px 20px;
-    background-color: #6a6eff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .login-btn:hover {
-    background-color: #575be6;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  backdrop-filter: blur(5px); /* Blurred background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Popup content container */
+.popup-content {
+  background-color: #fff;
+  padding: 1.5rem; /* Reduced padding */
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* Close button (×) */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #666; /* Added color for better visibility */
+}
+
+/* Header and description */
+.popup-content h1 {
+  font-size: 1.75rem; /* Slightly reduced size */
+  color: #333;
+  margin-bottom: 0.5rem; /* Reduced margin */
+  text-align: center;
+}
+
+.popup-content p {
+  font-size: 0.9rem; /* Reduced size */
+  color: #666;
+  margin-bottom: 1rem; /* Adjusted margin */
+  text-align: center;
+}
+
+/* Form container */
+.login-form {
+  width: 100%;
+  max-width: 100%;
+  margin: auto;
+}
+
+/* Input groups for each form element */
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem; /* Adjusted spacing */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 0.25rem; /* Added padding for better spacing */
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  background-color: #f9f9f9;
+  color: #666;
+  font-size: 1.2rem;
+  pointer-events: none;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 0.75rem; /* Adjusted padding */
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  border-radius: 0;
+}
+
+/* Submit button for the popup */
+.login-btn {
+  width: 100%;
+  padding: 0.75rem; /* Adjusted padding */
+  background-color: #6a6eff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem; /* Adjusted spacing */
+}
+
+.login-btn:hover {
+  background-color: #575be6;
+}
+
+/* Error and success messages */
+.error-message {
+  color: #d9534f; /* Red color for errors */
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.success-message {
+  color: #5cb85c; /* Green color for success */
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Link text for "Forgot Password?" and "Back to Login" */
+.link-text {
+  font-size: 0.9rem;
+  color: #6a6eff;
+  text-align: center;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link-text:hover {
+  color: #575be6;
+}

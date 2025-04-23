@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Header from "../Shared/Header";
 import Footer from "../Shared/Footer";
 import "./Profile.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons"; // Importing the user icon
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
@@ -79,11 +81,11 @@ function Profile() {
       setError("No token found. Please log in.");
       return;
     }
-    
+
     // Create a copy without email (since it's not updatable)
     const dataToSend = { ...formData };
     delete dataToSend.email;
-    
+
     try {
       const response = await fetch("http://localhost:5001/api/auth/profile", {
         method: "PUT",
@@ -93,13 +95,13 @@ function Profile() {
         },
         body: JSON.stringify(dataToSend),
       });
-      
+
       if (!response.ok) {
         throw new Error("Failed to update user data.");
       }
-      
+
       const result = await response.json();
-      
+
       setUpdateSuccess(true);
       setTimeout(() => setUpdateSuccess(false), 3000); // Hide success message after 3 seconds
       setIsEditing(false); // Exit edit mode after saving
@@ -122,7 +124,7 @@ function Profile() {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="error-container">
@@ -139,12 +141,12 @@ function Profile() {
       <Header />
       <div className="profile-container">
         <h1 className="welcome-text">Welcome, {formData.username}</h1>
-        
+
         {/* Profile Completeness Indicator */}
         <div className="profile-completeness">
           <div className="completeness-bar">
-            <div 
-              className="completeness-fill" 
+            <div
+              className="completeness-fill"
               style={{ width: `${completeness}%` }}
             ></div>
           </div>
@@ -156,14 +158,11 @@ function Profile() {
             Profile updated successfully!
           </div>
         )}
-        
+
         <div className="profile-header">
           <div className="profile-image-container">
-            <img
-              src="/api/placeholder/48/48"
-              alt="Profile"
-              className="profile-image"
-            />
+            {/* Replacing the image with a user icon */}
+            <FontAwesomeIcon icon={faUser} className="user-icon" />
           </div>
           <div className="profile-info">
             <p className="profile-name">{formData.username}</p>
@@ -176,7 +175,7 @@ function Profile() {
             {isEditing ? "Cancel Edit" : "Edit Profile"}
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="form-grid">
           <div className="form-group">
             <label>Username</label>
@@ -262,7 +261,7 @@ function Profile() {
             </button>
           )}
         </form>
-        
+
         {/* Email Section */}
         <div className="email-section">
           <h2>My Email Address</h2>
