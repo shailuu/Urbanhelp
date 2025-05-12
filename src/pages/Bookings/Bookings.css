@@ -8,6 +8,7 @@
   min-height: calc(100vh - 120px);
 }
 
+
 .booking-title {
   font-size: 24px;
   font-weight: 600;
@@ -122,44 +123,55 @@
   }
 }
 
-.form-group {
+/* .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   margin-bottom: 1rem;
-}
+} */
 
 .form-group label {
   font-size: 14px;
   font-weight: 500;
   color: #333;
-}
+} 
 
 .form-group input,
 .form-group select {
-  padding: 0.75rem;
+  padding: 0.5rem;
+  font-size: 14px;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
-  font-size: 14px;
-  transition: border-color 0.2s ease;
+  height: 40px; /* Set fixed height */
+  box-sizing: border-box; /* Include padding in height calculation */
+  max-height: 40px; /* Ensure max-height is also set */
 }
 
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
-}
-
+/* Fix for error state inputs */
 .form-group input.error,
 .form-group select.error {
   border-color: #ef4444;
+  height: 40px; /* Maintain same height when error */
+  max-height: 40px;
 }
 
+/* Make sure error messages don't cause layout shifts */
 .error-message {
   color: #ef4444;
   font-size: 12px;
   margin-top: 0.25rem;
+  position: relative; /* Keep error message in normal flow */
+  min-height: 18px; /* Reserve space for error message */
+  display: block; /* Ensure it's a block element */
+}
+
+/* Ensure form groups have consistent height even with errors */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  min-height: 80px; /* Give enough space for label, input and error message */
 }
 
 /* Buttons */
@@ -245,6 +257,8 @@
   border-radius: 0.5rem;
   font-size: 14px;
   box-sizing: border-box; /* Prevent padding from affecting width */
+  height: 40px; /* Maintain same height when error */
+  max-height: 40px;
 }
 
 /* Styles for react-datepicker popup */

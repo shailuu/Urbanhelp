@@ -422,12 +422,12 @@ const Bookings = () => {
               <div>{selectedBooking.isApproved ? 'Approved' : 'Pending'}</div>
               
               <div style={{ fontWeight: 'bold' }}>Charge:</div>
-              <div>${selectedBooking.charge?.toFixed(2) || 'N/A'}</div>
+              <div>Rs.{selectedBooking.charge?.toFixed(2) || 'N/A'}</div>
               
               <div style={{ fontWeight: 'bold' }}>Assigned Worker:</div>
               <div>{selectedBooking.approvedWorker?.name || 'Not assigned'}</div>
             </div>
-            
+             
             <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
               <h3>Client Information</h3>
               <div style={{ 

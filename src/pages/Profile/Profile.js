@@ -20,13 +20,15 @@ function Profile() {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false); // State for delete confirmation dialog
+  const [showDeleteSuccessDialog, setShowDeleteSuccessDialog] = useState(false); // State for success dialog
   const navigate = useNavigate();
 
   // Fetch user data on component mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login");
+      navigate("/");
       return;
     }
     const fetchUserData = async () => {
@@ -41,9 +43,15 @@ function Profile() {
           throw new Error("Failed to fetch user data.");
         }
         const userData = await response.json();
+        // Format dob to YYYY-MM-DD if it exists
+        let formattedDob = "";
+        if (userData.dob) {
+          const dobDate = new Date(userData.dob);
+          formattedDob = dobDate.toISOString().split("T")[0]; // Extract YYYY-MM-DD
+        }
         setFormData({
           username: userData.username || "", // Required field
-          dob: userData.dob || "", // Optional field
+          dob: formattedDob || "", // Optional field, ensure it's in YYYY-MM-DD format
           gender: userData.gender || "", // Optional field
           city: userData.city || "", // Optional field
           phoneNumber: userData.phoneNumber || "", // Optional field
@@ -75,17 +83,14 @@ function Profile() {
       alert("Username and Email are required fields.");
       return;
     }
-
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found. Please log in.");
       return;
     }
-
     // Create a copy without email (since it's not updatable)
     const dataToSend = { ...formData };
     delete dataToSend.email;
-
     try {
       const response = await fetch("http://localhost:5001/api/auth/profile", {
         method: "PUT",
@@ -95,13 +100,10 @@ function Profile() {
         },
         body: JSON.stringify(dataToSend),
       });
-
       if (!response.ok) {
         throw new Error("Failed to update user data.");
       }
-
       const result = await response.json();
-
       setUpdateSuccess(true);
       setTimeout(() => setUpdateSuccess(false), 3000); // Hide success message after 3 seconds
       setIsEditing(false); // Exit edit mode after saving
@@ -117,6 +119,38 @@ function Profile() {
     return Math.round((filledFields.length / fields.length) * 100);
   };
 
+  // Handle Delete Account
+  const handleDeleteAccount = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("No token found. Please log in.");
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:5001/api/auth/delete-account", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete account.");
+      }
+
+      // Show success dialog
+      setShowDeleteDialog(false); // Hide confirmation dialog
+      setShowDeleteSuccessDialog(true);
+
+      // Clear token and redirect after 3 seconds
+      setTimeout(() => {
+        localStorage.removeItem("token");
+        navigate("/");
+      }, 3000);
+    } catch (err) {
+      alert("Failed to delete account. Please try again.");
+    }
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -124,12 +158,11 @@ function Profile() {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="error-container">
         <p>{error}</p>
-        <button onClick={() => navigate("/login")}>Back to Login</button>
+        <button onClick={() => navigate("/")}>Back to Login</button>
       </div>
     );
   }
@@ -231,18 +264,21 @@ function Profile() {
             </select>
           </div>
           <div className="form-group">
-            <label>Phone Number</label>
-            <input
-              type="tel"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-              placeholder="Enter your phone number"
-              disabled={!isEditing}
-              className="form-input"
-              pattern="[0-9]*"
-            />
-          </div>
+  <label>Phone Number</label>
+  <input
+    type="tel"
+    name="phoneNumber"
+    value={formData.phoneNumber}
+    onChange={handleInputChange}
+    placeholder="Enter your 10-digit phone number"
+    disabled={!isEditing}
+    className="form-input"
+    pattern="\d{10}"
+    title="Phone number must be exactly 10 digits"
+    maxLength={10}
+  />
+</div>
+
           <div className="form-group">
             <label>Address</label>
             <input
@@ -272,6 +308,44 @@ function Profile() {
               <p className="email-time">Primary Email</p>
             </div>
           </div>
+        </div>
+
+        {/* Delete Account Button */}
+        <div className="delete-account-section">
+          <button
+            className="delete-button"
+            onClick={() => setShowDeleteDialog(true)}
+          >
+            Delete My Account
+          </button>
+
+          {/* Confirmation Dialog */}
+          {showDeleteDialog && (
+            <div className="confirmation-dialog">
+              <p>Are you sure you want to delete your account?</p>
+              <div className="dialog-buttons">
+                <button
+                  className="confirm-button"
+                  onClick={handleDeleteAccount}
+                >
+                  Yes, Proceed
+                </button>
+                <button
+                  className="cancel-button"
+                  onClick={() => setShowDeleteDialog(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Success Dialog */}
+          {showDeleteSuccessDialog && (
+            <div className="success-dialog">
+              <p>Your account has been deleted.</p>
+            </div>
+          )}
         </div>
       </div>
       <Footer />

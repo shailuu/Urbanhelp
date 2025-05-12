@@ -10,7 +10,6 @@ function ServiceDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
-
     const [service, setService] = useState(null);
     const [selectedDuration, setSelectedDuration] = useState("");
     const [charge, setCharge] = useState(0);
@@ -20,6 +19,7 @@ function ServiceDetail() {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [showLoginPopup, setShowLoginPopup] = useState(false);
     const [loginReason, setLoginReason] = useState("");
+    const [hasReviewed, setHasReviewed] = useState(false); // Track if user has reviewed
 
     useEffect(() => {
         fetch(`http://localhost:5001/api/services/${id}`)
@@ -37,7 +37,11 @@ function ServiceDetail() {
             });
 
         fetchReviews();
-    }, [id]);
+
+        if (isAuthenticated) {
+            checkUserReview();
+        }
+    }, [id, isAuthenticated]);
 
     const fetchReviews = () => {
         fetch(`http://localhost:5001/api/services/${id}/reviews`)
@@ -47,6 +51,26 @@ function ServiceDetail() {
             })
             .then((data) => setReviews(data))
             .catch((err) => console.error("Error loading reviews:", err));
+    };
+
+    const checkUserReview = async () => {
+        const token = localStorage.getItem("token");
+        if (!token || !isAuthenticated) return;
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/services/${id}/check-review`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setHasReviewed(data.hasReviewed);
+            }
+        } catch (err) {
+            console.error("Error checking review:", err);
+        }
     };
 
     const handleDurationChange = (e) => {
@@ -67,12 +91,14 @@ function ServiceDetail() {
 
     const handleReviewChange = (e) => {
         const { name, value } = e.target;
-        setNewReview({ ...newReview, [name]: name === "rating" ? parseInt(value) : value });
+        setNewReview({
+            ...newReview,
+            [name]: name === "rating" ? parseInt(value) : value
+        });
     };
 
     const handleSubmitReview = (e) => {
         e.preventDefault();
-
         if (!isAuthenticated) {
             setLoginReason("review");
             setShowLoginPopup(true);
@@ -85,6 +111,7 @@ function ServiceDetail() {
         }
 
         setSubmitLoading(true);
+
         const token = localStorage.getItem("token");
 
         fetch(`http://localhost:5001/api/services/${id}/reviews`, {
@@ -102,9 +129,10 @@ function ServiceDetail() {
             .then(() => {
                 setNewReview({ rating: 5, comment: "" });
                 fetchReviews();
+                setHasReviewed(true); // Mark as reviewed
                 alert("Review submitted!");
             })
-            .catch(() => alert("Error submitting review."))
+            .catch(() => alert("Review Already submitted"))
             .finally(() => setSubmitLoading(false));
     };
 
@@ -119,6 +147,7 @@ function ServiceDetail() {
                 const textarea = document.querySelector(".comment-input textarea");
                 if (textarea) textarea.focus();
             }, 300);
+            checkUserReview(); // Refresh review status
         } else if (loginReason === "booking") {
             navigate(`/booking/${id}?duration=${selectedDuration}&charge=${charge}`);
         }
@@ -158,7 +187,7 @@ function ServiceDetail() {
                                 ))}
                             </select>
                         </div>
-                        {charge > 0 && <p className="charge"><strong>Charge:</strong> ${charge}</p>}
+                        {charge > 0 && <p className="charge"><strong>Charge:</strong> Rs.{charge}</p>}
                         {charge > 0 && (
                             <button className="book-now-btn" onClick={handleBookNow}>Book Now</button>
                         )}
@@ -171,39 +200,54 @@ function ServiceDetail() {
                     <div className="reviews-container">
                         <div className="reviews-form-column">
                             {isAuthenticated ? (
-                                <form className="review-form" onSubmit={handleSubmitReview}>
-                                    <h3>Write a Review</h3>
-                                    <div className="rating-select">
-                                        <label htmlFor="rating">Your Rating:</label>
-                                        <select id="rating" name="rating" value={newReview.rating} onChange={handleReviewChange}>
-                                            {[5, 4, 3, 2, 1].map((val) => (
-                                                <option key={val} value={val}>{val} Star{val > 1 && 's'}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="comment-input">
-                                        <label htmlFor="comment">Your Review:</label>
-                                        <textarea
-                                            id="comment"
-                                            name="comment"
-                                            value={newReview.comment}
-                                            onChange={handleReviewChange}
-                                            placeholder="Share your experience..."
-                                            required
-                                        />
-                                    </div>
-                                    <button className="submit-review-btn" type="submit" disabled={submitLoading}>
-                                        {submitLoading ? "Submitting..." : "Submit Review"}
-                                    </button>
-                                </form>
+                                hasReviewed ? (
+                                    <p className="already-reviewed">
+                                        You have already submitted your review.
+                                    </p>
+                                ) : (
+                                    <form className="review-form" onSubmit={handleSubmitReview}>
+                                        <h3>Write a Review</h3>
+                                        <div className="rating-select">
+                                            <label htmlFor="rating">Your Rating:</label>
+                                            <select id="rating" name="rating" value={newReview.rating} onChange={handleReviewChange}>
+                                                {[5, 4, 3, 2, 1].map((val) => (
+                                                    <option key={val} value={val}>
+                                                        {val} Star{val > 1 && 's'}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="comment-input">
+                                            <label htmlFor="comment">Your Review:</label>
+                                            <textarea
+                                                id="comment"
+                                                name="comment"
+                                                value={newReview.comment}
+                                                onChange={handleReviewChange}
+                                                placeholder="Share your experience..."
+                                                required
+                                            />
+                                        </div>
+                                        <button
+                                            className="submit-review-btn"
+                                            type="submit"
+                                            disabled={submitLoading}
+                                        >
+                                            {submitLoading ? "Submitting..." : "Submit Review"}
+                                        </button>
+                                    </form>
+                                )
                             ) : (
                                 <div className="login-to-review">
                                     <p>
                                         Please{" "}
-                                        <button className="login-link" onClick={() => {
-                                            setLoginReason("review");
-                                            setShowLoginPopup(true);
-                                        }}>
+                                        <button
+                                            className="login-link"
+                                            onClick={() => {
+                                                setLoginReason("review");
+                                                setShowLoginPopup(true);
+                                            }}
+                                        >
                                             login
                                         </button>{" "}
                                         to share your experience
@@ -211,13 +255,16 @@ function ServiceDetail() {
                                 </div>
                             )}
                         </div>
+
                         <div className="reviews-list-column">
                             <div className="reviews-list">
                                 {reviews.length > 0 ? (
                                     reviews.map((review) => (
                                         <div key={review._id} className="review-item">
                                             <div className="review-header">
-                                                <span className="review-author">{review.userId?.username || "Anonymous"}</span>
+                                                <span className="review-author">
+                                                    {review.userId?.username || "Anonymous"}
+                                                </span>
                                                 <span className="review-date">
                                                     {new Date(review.createdAt).toLocaleDateString()}
                                                 </span>

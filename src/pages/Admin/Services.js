@@ -21,7 +21,6 @@ const Services = () => {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-  
   const [editingService, setEditingService] = useState(null);
   const [editImageFile, setEditImageFile] = useState(null);
   const [editImagePreview, setEditImagePreview] = useState('');
@@ -37,32 +36,42 @@ const Services = () => {
   const fetchServices = async () => {
     setIsLoading(true);
     try {
-      const data = await getServices();
-      setServices(data.services);;
+      const data = await getServices(); // Uses the correct endpoint from api.js
+      console.log('API Response:', data); // Debugging line
+
+      let servicesArray = [];
+
+      if (Array.isArray(data)) {
+        servicesArray = data;
+      } else if (data && Array.isArray(data.services)) {
+        servicesArray = data.services;
+      } else {
+        console.error('Unexpected API response format');
+        servicesArray = [];
+      }
+
+      setServices(servicesArray);
     } catch (error) {
       console.error('Error fetching services:', error);
+      setServices([]);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchServices = async () => {
-      const response = await fetch("http://localhost:5001/api/services");
-      const data = await response.json();
-      setServices(data.services); // 👈 Make sure you're accessing the array
-    };
-  
     fetchServices();
   }, []);
-  
+
   const handleEdit = (id) => {
     const serviceToEdit = services.find(service => service._id === id);
+    if (!serviceToEdit) return;
+
     setEditingService(JSON.parse(JSON.stringify(serviceToEdit)));
     setEditServiceId(id);
     setEditImagePreview(serviceToEdit.image);
   };
-  
+
   const handleCancel = () => {
     setEditServiceId(null);
     setEditingService(null);

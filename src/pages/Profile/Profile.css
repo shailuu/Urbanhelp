@@ -410,3 +410,92 @@ select.form-input {
   font-size: 48px; /* Adjust size as needed */
   color: #6b7280; /* Grayish color for the icon */
 }
+/* Confirmation Dialog Styles */
+.confirmation-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.confirmation-dialog p {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #2d3748;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-button, .cancel-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.confirm-button {
+  background-color: #dc2626;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #b91c1c;
+}
+
+.cancel-button {
+  background-color: #f8fafc;
+  color: #6b7280;
+}
+
+.cancel-button:hover {
+  background-color: #e5e7eb;
+}
+/* Delete Button Styles */
+.delete-button {
+  background-color: #dc2626; /* Red color for destructive action */
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #b91c1c; /* Darker red on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.delete-button:active {
+  transform: translateY(0);
+}
+.success-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  text-align: center;
+}
+
+.success-dialog p {
+  font-size: 1.2rem;
+  color: #333;
+}

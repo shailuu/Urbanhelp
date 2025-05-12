@@ -45,11 +45,7 @@ function Services() {
           ))}
         </div>
       </div>
-      <section className="booking-section">
-        <h2><b>Book Your Service</b></h2>
-        <p>Secure your appointment with top-rated providers for a seamless home service experience. Choose your preferred date and time now!</p>
-        <button>Start Booking</button>
-      </section>
+     
       <Footer />
     </div>
   );

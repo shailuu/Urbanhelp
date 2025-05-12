@@ -9,7 +9,7 @@ function ServiceCard({ _id, title, description, image }) {
       <h3>{title}</h3>
       <p>{description}</p>
       <Link to={`/services/${_id}`} className="learn-more-btn">
-        Learn More
+        Book Now
       </Link>
     </div>
   );

@@ -1,6 +1,7 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useContext } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+import { AuthContext } from "../context/AuthContext"; // Adjust path as needed
 
 // Public Pages
 import Home from "../pages/Home/Home";
@@ -14,9 +15,6 @@ import Error from "../pages/Error/Error";
 import ServiceDetail from "../pages/Services/ServiceDetail";
 //import Notifications from "../Components/Notifications";
 
-
-
-
 // Admin Panel
 import AdminDashboard from "../pages/Admin/AdminDashboard";
 import UsersPage from "../pages/Admin/Users"; 
@@ -25,12 +23,30 @@ import WorkWithUs from "../pages/Admin/WorkWithUs";
 import Layout from "../Components/Admin/Layout";
 import AdminServices from "../pages/Admin/Services";
 import ApprovedWorkers from "../pages/Admin/ApprovedWorkers"; 
-import AdminBookings from "../pages/Admin/Bookings"; // Renamed import for bookings
+import AdminBookings from "../pages/Admin/Bookings";
+
+// Redirect component based on user role
+const RoleBasedRedirect = () => {
+  const { user, loading } = useContext(AuthContext);
+  
+  if (loading) return <div>Loading...</div>;
+  
+  // If user is admin, redirect to admin dashboard
+  if (user && user.role === "admin") {
+    return <Navigate to="/admin" replace />;
+  }
+  
+  // For regular users, redirect to home
+  return <Navigate to="/" replace />;
+};
 
 function AppRoutes() {
   return (
     <Router>
       <Routes>
+        {/* Redirections */}
+        <Route path="/redirect" element={<RoleBasedRedirect />} />
+        
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/workwithus" element={<Workwithus />} />
@@ -42,21 +58,21 @@ function AppRoutes() {
         <Route path="/booking/:id" element={<Bookings />} />
         {/* <Route path="/notifications" element={<Notifications />} /> */}
 
-        {/* Admin Panel Routes - Protected */}
+        {/* Admin Panel Routes - Protected with admin role check */}
         <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <AdminDashboard />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
+  path="/admin"
+  element={
+    <ProtectedRoute adminOnly={true}>
+      <Layout>
+        <AdminDashboard />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
         <Route
           path="/admin/users"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute adminOnly={true}>
               <Layout>
                 <UsersPage />
               </Layout>
@@ -66,7 +82,7 @@ function AppRoutes() {
         <Route
           path="/admin/contacts"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute adminOnly={true}>
               <Layout>
                 <Contacts />
               </Layout>
@@ -76,7 +92,7 @@ function AppRoutes() {
         <Route
           path="/admin/workwithus"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute adminOnly={true}>
               <Layout>
                 <WorkWithUs />
               </Layout>
@@ -86,7 +102,7 @@ function AppRoutes() {
         <Route
           path="/admin/services"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute adminOnly={true}>
               <Layout>
                 <AdminServices />
               </Layout>
@@ -96,7 +112,7 @@ function AppRoutes() {
         <Route
           path="/admin/approvedworkers"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute adminOnly={true}>
               <Layout>
                 <ApprovedWorkers />
               </Layout>
@@ -106,15 +122,16 @@ function AppRoutes() {
         <Route
           path="/admin/bookings"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute adminOnly={true}>
               <Layout>
-                <AdminBookings /> {/* Updated to use renamed import */}
+                <AdminBookings />
               </Layout>
             </ProtectedRoute>
           }
         />
 
         {/* 404 Page */}
+        <Route path="/error" element={<Error />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>

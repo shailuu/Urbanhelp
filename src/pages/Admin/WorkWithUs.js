@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   getWorkWithUs,
-  createWorkWithUs,
   updateWorkWithUs,
   deleteWorkWithUs,
   approveWorker
@@ -12,17 +11,7 @@ import './Users.css';
 const WorkWithUs = () => {
   const [applications, setApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
   const [editApplicationId, setEditApplicationId] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    service: '',
-    skills: '',
-    experience: '',
-    status: 'new',
-  });
 
   const columns = [
     { key: 'name', title: 'Name' },
@@ -89,12 +78,12 @@ const WorkWithUs = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Approval failed');
       }
-  
+
       // Update the local state to show 'approved'
       setApplications((prev) =>
         prev.map((app) =>
@@ -106,7 +95,6 @@ const WorkWithUs = () => {
       alert('Failed to approve worker');
     }
   };
-  
 
   const handleChange = (e, applicationId) => {
     const { name, value } = e.target;
@@ -115,79 +103,15 @@ const WorkWithUs = () => {
     ));
   };
 
-  const handleCreateSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const newApplication = await createWorkWithUs(formData);
-      setApplications([...applications, newApplication]);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        service: '',
-        skills: '',
-        experience: '',
-        status: 'new',
-      });
-      setIsCreateFormVisible(false);
-    } catch (error) {
-      console.error('Error creating application:', error);
-    }
-  };
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="page-container">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div className="page-header">
         <h1 className="page-title">Work With Us Applications</h1>
-        <button className="btn btn-primary" onClick={() => setIsCreateFormVisible(!isCreateFormVisible)}>
-          {isCreateFormVisible ? 'Close Form' : 'Create New Application'}
-        </button>
       </div>
-
-      {isCreateFormVisible && (
-        <form className="create-form" onSubmit={handleCreateSubmit}>
-          {['name', 'email', 'phone', 'service', 'skills', 'experience'].map((field) => (
-            <div className="form-group" key={field}>
-              <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-              <input
-                type="text"
-                id={field}
-                name={field}
-                className="form-control"
-                value={formData[field]}
-                onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
-                required
-              />
-            </div>
-          ))}
-
-          <div className="form-group">
-            <label htmlFor="status">Status</label>
-            <select
-              id="status"
-              name="status"
-              className="form-control"
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              required
-            >
-              <option value="new">New</option>
-              <option value="under-review">Under Review</option>
-              <option value="interview">Interview</option>
-              <option value="rejected">Rejected</option>
-              <option value="accepted">Accepted</option>
-            </select>
-          </div>
-
-          <div className="form-actions">
-            <button type="submit" className="btn btn-success">Submit</button>
-          </div>
-        </form>
-      )}
 
       <table className="table">
         <thead>
@@ -227,25 +151,25 @@ const WorkWithUs = () => {
                     <button onClick={() => handleEdit(application._id)} className="btn btn-warning btn-sm">Edit</button>
                     <button onClick={() => handleDelete(application._id)} className="btn btn-danger btn-sm ml-2">Delete</button>
                     <select
-  defaultValue=""
-  onChange={(e) => {
-    const value = e.target.value;
-    if (value === "approve") {
-      handleApprove(application._id);
-    }
-  }}
-  style={{
-    padding: '5px 10px',
-    borderRadius: '4px',
-    backgroundColor: '#f0f0f0',
-    color: '#333',
-    border: '1px solid #ccc',
-  }}
->
-  <option value="" disabled>Select Action</option>
-  <option value="approve" style={{ color: 'green' }}>Approve</option>
-  <option value="disapprove" style={{ color: 'red' }}>Disapprove</option>
-</select>
+                      defaultValue=""
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === "approve") {
+                          handleApprove(application._id);
+                        }
+                      }}
+                      style={{
+                        padding: '5px 10px',
+                        borderRadius: '4px',
+                        backgroundColor: '#f0f0f0',
+                        color: '#333',
+                        border: '1px solid #ccc',
+                      }}
+                    >
+                      <option value="" disabled>Select Action</option>
+                      <option value="approve" style={{ color: 'green' }}>Approve</option>
+                      <option value="disapprove" style={{ color: 'red' }}>Disapprove</option>
+                    </select>
                   </>
                 )}
               </td>
