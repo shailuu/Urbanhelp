@@ -1,0 +1,39 @@
+.booking-history-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f0f4f8; /* subtle light background for container */
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* subtle shadow */
+}
+
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-card {
+  padding: 1rem 1.5rem;
+  border: 1px solid #ddd; /* slightly darker border */
+  border-radius: 10px;
+  background-color: #fff; /* white card with shadow */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.booking-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* subtle hover effect */
+}
+
+.booking-card p {
+  margin: 0.3rem 0;
+  color: #333; /* darker text for contrast */
+  font-size: 1rem;
+}
+
+h2 {
+  text-align: center;
+  color: #222;
+  margin-bottom: 1.5rem;
+}

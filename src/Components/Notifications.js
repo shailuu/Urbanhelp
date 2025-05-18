@@ -5,6 +5,7 @@ import {
     markAllNotificationsAsRead,
 } from "../Services/api";
 import "./Notifications.css";
+import KhaltiCheckout from "khalti-checkout-web";
 
 function Notifications({ userEmail }) {
     const [notifications, setNotifications] = useState([]);
@@ -83,7 +84,57 @@ function Notifications({ userEmail }) {
     };
 
     const handlePayNow = (notification) => {
-        alert(`Redirecting to payment for: ${notification.metadata?.serviceTitle || "service"}`);
+        const { metadata = {} } = notification;
+
+        const serviceTitle = metadata.serviceTitle || "Service Booking";
+        const amountInPaisa = metadata.amount || 1000; // Rs. 10 default
+        const bookingId = metadata.bookingId || "BOOKING_123";
+
+        const config = {
+            // Use the correct test key provided by Khalti for sandbox
+            publicKey: "96e8f6b942674317a156c319f4c81752",
+            productIdentity: bookingId,
+            productName: serviceTitle,
+            productUrl: "http://localhost:3000/",
+            eventHandler: {
+                onSuccess(payload) {
+  console.log("✅ Payment successful:", payload);
+
+  fetch("http://localhost:5001/api/payment/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      token: payload.token,
+      amount: payload.amount,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.status === "verified") {
+        alert("Payment verified and completed!");
+        window.location.href = "/payment-success";
+      } else {
+        alert("Payment was successful but verification failed.");
+      }
+    });
+}
+,
+                onError(error) {
+                    console.error("❌ Payment error:", error);
+                    alert("Payment failed. Please try again.");
+                },
+                onClose() {
+                    console.log("🚪 Payment widget closed");
+                },
+            },
+        };
+
+        const checkout = new KhaltiCheckout(config);
+
+        // Show payment widget
+        checkout.show({
+            amount: amountInPaisa, // Must be in paisa (Rs. 10 = 1000)
+        });
     };
 
     return (

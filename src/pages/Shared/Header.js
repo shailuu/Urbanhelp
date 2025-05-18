@@ -1,22 +1,20 @@
-import React, { useContext, useState } from "react"; // Add 'useState' here
+import React, { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./Header.css";
 import { AuthContext } from "../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faBell, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faBell, faSignOutAlt, faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import LoginPopup from "../../Components/Popups/LoginPopup";
 import SignupPopup from "../../Components/Popups/SignupPopup";
-import Notifications from "../../Components/Notifications"; // Import the Notifications component
+import Notifications from "../../Components/Notifications";
 
 function Header() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // State for managing popup visibility
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
   const [isSignupPopupOpen, setIsSignupPopupOpen] = useState(false);
 
-  // Functions to open and close popups
   const openLoginPopup = () => setIsLoginPopupOpen(true);
   const closeLoginPopup = () => setIsLoginPopupOpen(false);
   const openSignupPopup = () => setIsSignupPopupOpen(true);
@@ -24,12 +22,10 @@ function Header() {
 
   return (
     <header className="header">
-      {/* Logo */}
       <div className="header-logo" onClick={() => navigate("/")}>
         <span>UrbanHelp</span>
       </div>
 
-      {/* Navigation Links */}
       <nav className="header-nav">
         <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
           Home
@@ -40,16 +36,21 @@ function Header() {
         <NavLink to="/aboutus" className={({ isActive }) => (isActive ? "active" : "")}>
           About Us
         </NavLink>
+
+        {/* Show Booking History link only if logged in */}
+        {isAuthenticated && (
+          <NavLink to="/booking-history" className={({ isActive }) => (isActive ? "active" : "")}>
+            <FontAwesomeIcon icon={faClockRotateLeft} style={{ marginRight: "6px" }} />
+            History
+          </NavLink>
+        )}
       </nav>
 
-      {/* Header Buttons */}
       <div className="header-buttons">
         {isAuthenticated ? (
           <>
-            {/* Notifications Dropdown */}
             <Notifications userEmail={user?.email} />
 
-            {/* Profile Button */}
             <button
               className="icon-btn profile-btn"
               onClick={() => navigate("/profile")}
@@ -58,7 +59,6 @@ function Header() {
               <span>{user?.username}</span>
             </button>
 
-            {/* Logout Button */}
             <button
               onClick={() => {
                 logout();
@@ -71,7 +71,6 @@ function Header() {
           </>
         ) : (
           <>
-            {/* Login and Signup Buttons */}
             <button className="login-btn" onClick={openLoginPopup}>
               Log In
             </button>
@@ -82,10 +81,7 @@ function Header() {
         )}
       </div>
 
-      {/* Render the LoginPopup if isLoginPopupOpen is true */}
       {isLoginPopupOpen && <LoginPopup onClose={closeLoginPopup} />}
-
-      {/* Render the SignupPopup if isSignupPopupOpen is true */}
       {isSignupPopupOpen && <SignupPopup onClose={closeSignupPopup} />}
     </header>
   );

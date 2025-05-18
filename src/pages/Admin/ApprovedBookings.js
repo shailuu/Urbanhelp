@@ -1,25 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import {
-  getAllBookings,
-  updateBooking,
-  deleteBooking,
-  approveBooking,
-  getApprovedWorkers,
+  getApprovedBookings,
+  disapproveBooking,
+  deleteApprovedBooking,
 } from '../../Services/api';
 import './Admin.css';
 import './Users.css';
 
-const Bookings = () => {
-  const [bookings, setBookings] = useState([]);
-  const [approvedWorkers, setApprovedWorkers] = useState([]);
-  const [selectedWorkers, setSelectedWorkers] = useState({});
-  const [selectedBooking, setSelectedBooking] = useState(null);
+const ApprovedBookings = () => {
+  const [approvedBookings, setApprovedBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   const columns = [
     { key: 'service.title', title: 'Service' },
     { key: 'clientInfo.name', title: 'Client' },
+    { key: 'approvedWorker.name', title: 'Worker' },
     { key: 'date', title: 'Date', format: (v) => new Date(v).toLocaleDateString() },
     { key: 'time', title: 'Time' },
   ];
@@ -31,51 +28,38 @@ const Bookings = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [all, workers] = await Promise.all([getAllBookings(), getApprovedWorkers()]);
-      const pending = Array.isArray(all) ? all.filter(b => !b.isApproved) : [];
-      setBookings(pending);
-      setApprovedWorkers(workers || []);
+      const approved = await getApprovedBookings();
+      setApprovedBookings(Array.isArray(approved) ? approved : []);
     } catch (err) {
-      setError('Failed to load bookings');
+      console.error(err);
+      setError('Failed to load approved bookings');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleApprove = async (id) => {
-    const workerId = selectedWorkers[id];
-    if (!workerId) return alert('Select a worker first');
+  const handleDisapprove = async (id) => {
+    if (!window.confirm('Disapprove this booking?')) return;
     try {
-      await approveBooking(id, { approvedWorkerId: workerId });
-      setBookings(prev => prev.filter(b => b._id !== id));
-      alert('Approved successfully');
+      await disapproveBooking(id);
+      setApprovedBookings(prev => prev.filter(b => b._id !== id));
+      alert('Booking disapproved');
     } catch (err) {
       console.error(err);
-      alert('Approval failed');
+      alert('Failed to disapprove');
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this booking?')) return;
     try {
-      await deleteBooking(id);
-      setBookings(prev => prev.filter(b => b._id !== id));
-      alert('Deleted successfully');
+      await deleteApprovedBooking(id);
+      setApprovedBookings(prev => prev.filter(b => b._id !== id));
+      alert('Booking deleted');
     } catch (err) {
       console.error(err);
       alert('Delete failed');
     }
-  };
-
-  const getWorkersForBooking = (booking) => {
-    const title = booking.service?.title?.toLowerCase();
-    return approvedWorkers.filter(worker => {
-      if (worker.service?.toLowerCase() === title) return true;
-      if (Array.isArray(worker.skills)) {
-        return worker.skills.some(skill => skill.toLowerCase().includes(title));
-      }
-      return false;
-    });
   };
 
   const renderCell = (item, column) => {
@@ -85,28 +69,32 @@ const Bookings = () => {
     return column.format ? column.format(value) : value || 'N/A';
   };
 
-  // Modal Styles
+  // Improved modal styles with text color fixes
   const modalOverlayStyle = {
-    position: 'fixed',
-    top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'fixed', 
+    top: 0, 
+    left: 0, 
+    right: 0, 
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)', 
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center', 
+    alignItems: 'center', 
     zIndex: 1000,
   };
 
   const modalContentStyle = {
-    backgroundColor: '#fff',
-    padding: 20,
+    backgroundColor: '#fff', 
+    padding: 20, 
     borderRadius: 8,
-    width: '90%',
-    maxWidth: 500,
-    maxHeight: '80vh',
+    width: '90%', 
+    maxWidth: 500, 
+    maxHeight: '80vh', 
     overflowY: 'auto',
     boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
   };
 
+  // Added specific styles for modal text
   const modalTextStyle = {
     color: '#333',
     margin: '8px 0',
@@ -119,7 +107,7 @@ const Bookings = () => {
   };
 
   const modalValueStyle = {
-    color: '#0056b3',
+    color: '#0056b3', // Blue color for values
     fontWeight: 'normal',
   };
 
@@ -130,20 +118,9 @@ const Bookings = () => {
     marginBottom: '15px',
   };
 
-  const buttonStyle = (bgColor = '#007bff') => ({
-    marginRight: 6,
-    padding: '6px 12px',
-    cursor: 'pointer',
-    borderRadius: 4,
-    backgroundColor: bgColor,
-    color: '#fff',
-    border: 'none',
-    fontSize: '14px',
-  });
-
   return (
     <div className="page-container">
-      <h2>Pending Bookings</h2>
+      <h2>Approved Bookings</h2>
       {isLoading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -158,42 +135,29 @@ const Bookings = () => {
               </tr>
             </thead>
             <tbody>
-              {bookings.map(booking => (
+              {approvedBookings.map(booking => (
                 <tr key={booking._id}>
                   {columns.map(c => (
                     <td key={c.key}>{renderCell(booking, c)}</td>
                   ))}
                   <td>
                     <button
+                      className="btn btn-info btn-sm"
                       onClick={() => setSelectedBooking(booking)}
-                      style={buttonStyle('#28a745')}
+                      style={{ marginRight: 6 }}
                     >
                       View Details
                     </button>
-                    <select
-                      value={selectedWorkers[booking._id] || ''}
-                      onChange={(e) =>
-                        setSelectedWorkers(prev => ({ ...prev, [booking._id]: e.target.value }))
-                      }
+                    <button
+                      className="btn btn-warning btn-sm"
+                      onClick={() => handleDisapprove(booking._id)}
                       style={{ marginRight: 6 }}
                     >
-                      <option value="">Select Worker</option>
-                      {getWorkersForBooking(booking).map(worker => (
-                        <option key={worker._id} value={worker._id}>
-                          {worker.name}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      onClick={() => handleApprove(booking._id)}
-                      disabled={!selectedWorkers[booking._id]}
-                      style={buttonStyle('#28a745')}
-                    >
-                      Approve
+                      Disapprove
                     </button>
                     <button
+                      className="btn btn-danger btn-sm"
                       onClick={() => handleDelete(booking._id)}
-                      style={buttonStyle('#dc3545')}
                     >
                       Delete
                     </button>
@@ -203,40 +167,47 @@ const Bookings = () => {
             </tbody>
           </table>
 
-          {/* Modal */}
           {selectedBooking && (
             <div style={modalOverlayStyle} onClick={() => setSelectedBooking(null)}>
               <div
                 style={modalContentStyle}
                 onClick={e => e.stopPropagation()}
+                className="booking-details-modal"
               >
                 <h3 style={modalHeadingStyle}>Booking Details</h3>
+                
                 <p style={modalTextStyle}>
                   <span style={modalLabelStyle}>Service:</span>{' '}
                   <span style={modalValueStyle}>{selectedBooking.service?.title || 'N/A'}</span>
                 </p>
+                
                 <p style={modalTextStyle}>
                   <span style={modalLabelStyle}>Client Name:</span>{' '}
                   <span style={modalValueStyle}>{selectedBooking.clientInfo?.name || 'N/A'}</span>
                 </p>
+                
                 <p style={modalTextStyle}>
                   <span style={modalLabelStyle}>Client Email:</span>{' '}
                   <span style={modalValueStyle}>{selectedBooking.clientInfo?.email || 'N/A'}</span>
                 </p>
+                
+                <p style={modalTextStyle}>
+                  <span style={modalLabelStyle}>Worker:</span>{' '}
+                  <span style={modalValueStyle}>{selectedBooking.approvedWorker?.name || 'N/A'}</span>
+                </p>
+                
                 <p style={modalTextStyle}>
                   <span style={modalLabelStyle}>Date:</span>{' '}
                   <span style={modalValueStyle}>{new Date(selectedBooking.date).toLocaleDateString()}</span>
                 </p>
+                
                 <p style={modalTextStyle}>
                   <span style={modalLabelStyle}>Time:</span>{' '}
                   <span style={modalValueStyle}>{selectedBooking.time || 'N/A'}</span>
                 </p>
+                
                 <p style={modalTextStyle}>
-                  <span style={modalLabelStyle}>Duration:</span>{' '}
-                  <span style={modalValueStyle}>{selectedBooking.duration || 'N/A'}</span>
-                </p>
-                <p style={modalTextStyle}>
-                  <span style={modalLabelStyle}>Notes:</span>{' '}
+                  <span style={modalLabelStyle}>Additional Notes:</span>{' '}
                   <span style={modalValueStyle}>{selectedBooking.notes || 'None'}</span>
                 </p>
 
@@ -264,4 +235,4 @@ const Bookings = () => {
   );
 };
 
-export default Bookings;
+export default ApprovedBookings;

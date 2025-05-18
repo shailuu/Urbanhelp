@@ -94,7 +94,7 @@
   align-items: center;
 }
 
-/* Login and Signup buttons */
+/* Login and Signup buttons - FIXED CONSISTENT SIZING */
 .login-btn,
 .signup-btn {
   padding: 12px 22px;
@@ -107,8 +107,11 @@
   font-weight: 600;
   letter-spacing: 0.5px;
   box-shadow: 0 3px 6px rgba(106, 110, 255, 0.2);
-  /* Align buttons vertically with other elements */
-  align-self: center;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
 }
 
 .login-btn {
@@ -126,7 +129,7 @@
 .signup-btn {
   background-color: #6a6eff;
   color: white;
-  border: none;
+  border: 1px solid rgba(220, 220, 254, 0.5);
 }
 
 .signup-btn:hover {
@@ -232,6 +235,8 @@
   .signup-btn {
     padding: 10px 18px;
     font-size: 0.9rem;
+    height: 40px;
+    min-width: 90px;
   }
 }
 
@@ -252,6 +257,7 @@
   .header-buttons {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1;
+    gap: 15px;
+    margin-top: 15px;
   }
 }

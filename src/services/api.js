@@ -238,7 +238,15 @@ export const updateBooking = async (id, bookingData) => {
     throw error.response?.data || { message: 'Error updating booking' };
   }
 };
-
+// Approved Bookings
+export const deleteApprovedBooking = async (id) => {
+  try {
+    const response = await apiClient.delete(`/admin/approved-bookings/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error deleting approved booking' };
+  }
+};
 
 // Notifications
 export const getNotifications = async (userEmail) => {
@@ -274,5 +282,24 @@ export const deleteNotification = async (notificationId) => {
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error deleting notification' };
+  }
+};
+
+// Reviews (Admin)
+export const getAllReviews = async () => {
+  try {
+    const response = await apiClient.get('/admin/reviews');
+    return response.data.reviews || response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error fetching reviews' };
+  }
+};
+
+export const deleteReview = async (id) => {
+  try {
+    const response = await apiClient.delete(`/admin/reviews/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error deleting review' };
   }
 };

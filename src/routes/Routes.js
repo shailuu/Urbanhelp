@@ -13,6 +13,7 @@ import Profile from "../pages/Profile/Profile";
 import Bookings from "../pages/Bookings/Bookings";
 import Error from "../pages/Error/Error";
 import ServiceDetail from "../pages/Services/ServiceDetail";
+import BookingHistory from "../pages/BookingHistory/BookingHistory";
 //import Notifications from "../Components/Notifications";
 
 // Admin Panel
@@ -23,8 +24,9 @@ import WorkWithUs from "../pages/Admin/WorkWithUs";
 import Layout from "../Components/Admin/Layout";
 import AdminServices from "../pages/Admin/Services";
 import ApprovedWorkers from "../pages/Admin/ApprovedWorkers"; 
-import AdminBookings from "../pages/Admin/Bookings";
-
+import Reviews from "../pages/Admin/Reviews"; 
+import PendingBookings from "../pages/Admin/Bookings"; // Previously Bookings.js
+import ApprovedBookings from "../pages/Admin/ApprovedBookings";
 // Redirect component based on user role
 const RoleBasedRedirect = () => {
   const { user, loading } = useContext(AuthContext);
@@ -56,6 +58,15 @@ function AppRoutes() {
         <Route path="/services/:id" element={<ServiceDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking/:id" element={<Bookings />} />
+        <Route path="/booking-history"
+  element={
+    <ProtectedRoute>
+      <BookingHistory />
+    </ProtectedRoute>
+  }
+/>
+
+
         {/* <Route path="/notifications" element={<Notifications />} /> */}
 
         {/* Admin Panel Routes - Protected with admin role check */}
@@ -120,15 +131,37 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/bookings"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <Layout>
-                <AdminBookings />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
+  path="/admin/bookings"
+  element={
+    <ProtectedRoute adminOnly={true}>
+      <Layout>
+        <PendingBookings />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/approvedbookings"
+  element={
+    <ProtectedRoute adminOnly={true}>
+      <Layout>
+        <ApprovedBookings />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
+
+        <Route
+  path="/admin/reviews"
+  element={
+    <ProtectedRoute adminOnly={true}>
+      <Layout>
+        <Reviews />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
 
         {/* 404 Page */}
         <Route path="/error" element={<Error />} />
