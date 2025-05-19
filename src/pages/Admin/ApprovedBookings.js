@@ -15,7 +15,7 @@ const ApprovedBookings = () => {
 
   const columns = [
     { key: 'service.title', title: 'Service' },
-    { key: 'clientInfo.name', title: 'Client' },
+    { key: 'clientInfo.clientName', title: 'Client' },
     { key: 'approvedWorker.name', title: 'Worker' },
     { key: 'date', title: 'Date', format: (v) => new Date(v).toLocaleDateString() },
     { key: 'time', title: 'Time' },
@@ -168,67 +168,72 @@ const ApprovedBookings = () => {
           </table>
 
           {selectedBooking && (
-            <div style={modalOverlayStyle} onClick={() => setSelectedBooking(null)}>
-              <div
-                style={modalContentStyle}
-                onClick={e => e.stopPropagation()}
-                className="booking-details-modal"
-              >
-                <h3 style={modalHeadingStyle}>Booking Details</h3>
-                
-                <p style={modalTextStyle}>
-                  <span style={modalLabelStyle}>Service:</span>{' '}
-                  <span style={modalValueStyle}>{selectedBooking.service?.title || 'N/A'}</span>
-                </p>
-                
-                <p style={modalTextStyle}>
-                  <span style={modalLabelStyle}>Client Name:</span>{' '}
-                  <span style={modalValueStyle}>{selectedBooking.clientInfo?.name || 'N/A'}</span>
-                </p>
-                
-                <p style={modalTextStyle}>
-                  <span style={modalLabelStyle}>Client Email:</span>{' '}
-                  <span style={modalValueStyle}>{selectedBooking.clientInfo?.email || 'N/A'}</span>
-                </p>
-                
-                <p style={modalTextStyle}>
-                  <span style={modalLabelStyle}>Worker:</span>{' '}
-                  <span style={modalValueStyle}>{selectedBooking.approvedWorker?.name || 'N/A'}</span>
-                </p>
-                
-                <p style={modalTextStyle}>
-                  <span style={modalLabelStyle}>Date:</span>{' '}
-                  <span style={modalValueStyle}>{new Date(selectedBooking.date).toLocaleDateString()}</span>
-                </p>
-                
-                <p style={modalTextStyle}>
-                  <span style={modalLabelStyle}>Time:</span>{' '}
-                  <span style={modalValueStyle}>{selectedBooking.time || 'N/A'}</span>
-                </p>
-                
-                <p style={modalTextStyle}>
-                  <span style={modalLabelStyle}>Additional Notes:</span>{' '}
-                  <span style={modalValueStyle}>{selectedBooking.notes || 'None'}</span>
-                </p>
+  <div className="modal-overlay" onClick={() => setSelectedBooking(null)}>
+    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      
+      {/* Service Details */}
+      <div className="modal-section">
+        <h4>Service Details</h4>
+        <div className="modal-row">
+          <div className="modal-label">Service:</div>
+          <div className="modal-value">{selectedBooking.service?.title || 'N/A'}</div>
+        </div>
+        <div className="modal-row">
+          <div className="modal-label">Duration:</div>
+          <div className="modal-value">{selectedBooking.duration || 'N/A'}</div>
+        </div>
+        <div className="modal-row">
+          <div className="modal-label">Price:</div>
+          <div className="modal-value">Rs. {selectedBooking.charge || '0'}</div>
+        </div>
+      </div>
 
-                <button
-                  onClick={() => setSelectedBooking(null)}
-                  style={{
-                    marginTop: 20,
-                    padding: '8px 16px',
-                    cursor: 'pointer',
-                    borderRadius: 4,
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    border: 'none',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          )}
+      {/* Your Information */}
+      <div className="modal-section">
+        <h4>Your Information</h4>
+        <div className="modal-row">
+          <div className="modal-label">Name:</div>
+          <div className="modal-value">{selectedBooking.clientInfo?.clientName || 'N/A'}</div>
+        </div>
+        <div className="modal-row">
+          <div className="modal-label">Email:</div>
+          <div className="modal-value">{selectedBooking.clientInfo?.email || 'N/A'}</div>
+        </div>
+        <div className="modal-row">
+          <div className="modal-label">Phone:</div>
+          <div className="modal-value">{selectedBooking.clientInfo?.phone || 'N/A'}</div>
+        </div>
+        <div className="modal-row">
+          <div className="modal-label">Location:</div>
+          <div className="modal-value">{selectedBooking.clientInfo?.location || 'N/A'}</div>
+        </div>
+        <div className="modal-row">
+          <div className="modal-label">Address:</div>
+          <div className="modal-value">{selectedBooking.clientInfo?.address || 'N/A'}</div>
+        </div>
+      </div>
+
+      {/* Appointment Details */}
+      <div className="modal-section">
+        <h4>Appointment Details</h4>
+        <div className="modal-row">
+          <div className="modal-label">Date:</div>
+          <div className="modal-value">{new Date(selectedBooking.date).toLocaleDateString(undefined, {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+          })}</div>
+        </div>
+        <div className="modal-row">
+          <div className="modal-label">Time:</div>
+          <div className="modal-value">{selectedBooking.time || 'N/A'}</div>
+        </div>
+      </div>
+
+      <button className="modal-close-btn" onClick={() => setSelectedBooking(null)}>
+        Close
+      </button>
+    </div>
+  </div>
+)}
         </>
       )}
     </div>

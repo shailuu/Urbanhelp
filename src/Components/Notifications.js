@@ -5,7 +5,6 @@ import {
     markAllNotificationsAsRead,
 } from "../Services/api";
 import "./Notifications.css";
-import KhaltiCheckout from "khalti-checkout-web";
 
 function Notifications({ userEmail }) {
     const [notifications, setNotifications] = useState([]);
@@ -83,59 +82,32 @@ function Notifications({ userEmail }) {
         }
     };
 
-    const handlePayNow = (notification) => {
+    const handlePayNow = async (notification) => {
         const { metadata = {} } = notification;
-
         const serviceTitle = metadata.serviceTitle || "Service Booking";
-        const amountInPaisa = metadata.amount || 1000; // Rs. 10 default
+        const amountInPaisa = metadata.charge || 1000; // Rs. 10 default
         const bookingId = metadata.bookingId || "BOOKING_123";
 
-        const config = {
-            // Use the correct test key provided by Khalti for sandbox
-            publicKey: "96e8f6b942674317a156c319f4c81752",
-            productIdentity: bookingId,
-            productName: serviceTitle,
-            productUrl: "http://localhost:3000/",
-            eventHandler: {
-                onSuccess(payload) {
-  console.log("✅ Payment successful:", payload);
 
-  fetch("http://localhost:5001/api/payment/verify", {
+   const res = await fetch("https://dev.khalti.com/api/v2/epayment/initiate/", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authorization": "key 5f73f9343b964c0ea6823f5326c1cea6" },
     body: JSON.stringify({
-      token: payload.token,
-      amount: payload.amount,
+      "public_key":"5a07783ee5d0489c8f35f1a4d819a0f3",
+      "purchase_order_id":bookingId,
+      "purchase_order_name":serviceTitle,
+      "amount":amountInPaisa,
+      "product_url":"http://localhost:3000/",
+      "website_url":"http://localhost:3000/",
+      "return_url":"http://localhost:3000/"
     }),
+  });
+
+  await res.json().then((res)=>{
+    window.open(res.payment_url);
   })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.status === "verified") {
-        alert("Payment verified and completed!");
-        window.location.href = "/payment-success";
-      } else {
-        alert("Payment was successful but verification failed.");
-      }
-    });
+    
 }
-,
-                onError(error) {
-                    console.error("❌ Payment error:", error);
-                    alert("Payment failed. Please try again.");
-                },
-                onClose() {
-                    console.log("🚪 Payment widget closed");
-                },
-            },
-        };
-
-        const checkout = new KhaltiCheckout(config);
-
-        // Show payment widget
-        checkout.show({
-            amount: amountInPaisa, // Must be in paisa (Rs. 10 = 1000)
-        });
-    };
 
     return (
         <div className="notification-container">

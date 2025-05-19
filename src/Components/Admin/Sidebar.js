@@ -4,39 +4,39 @@ import './Layout.css'; // Import the layout-specific styles
 
 const Sidebar = () => {
   const [userName, setUserName] = useState('');
-  
+
   useEffect(() => {
     // Get user information from localStorage or sessionStorage
     const getUserInfo = () => {
       // Check various storage options where user info might be stored
-      const userInfo = JSON.parse(localStorage.getItem('userInfo')) || 
-                       JSON.parse(sessionStorage.getItem('userInfo')) || 
+      const userInfo = JSON.parse(localStorage.getItem('userInfo')) ||
+                       JSON.parse(sessionStorage.getItem('userInfo')) ||
                        JSON.parse(localStorage.getItem('user')) ||
                        JSON.parse(sessionStorage.getItem('user')) || {};
-                       
+
       // Set user name - handle different possible object structures
       if (userInfo) {
         // Try different possible properties where name might be stored
-        const name = userInfo.name || userInfo.fullName || userInfo.displayName || 
-                    userInfo.username || userInfo.email || 'Admin';
+        const name = userInfo.name || userInfo.fullName || userInfo.displayName ||
+                     userInfo.username || userInfo.email || 'Admin';
         setUserName(name);
       }
     };
-    
+
     getUserInfo();
   }, []);
 
   const handleLogout = () => {
     // Implement logout logic here, such as clearing session storage or cookies
     console.log("Logging out...");
-    
+
     // Clear both localStorage and sessionStorage to be thorough
     localStorage.clear(); // Clear all localStorage items
     sessionStorage.clear(); // Clear all sessionStorage items
-    
+
     // Clear specific authentication tokens if needed
     document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // Clear cookies
-    
+
     // Redirect user to the main homepage after logout
     window.location.href = '/'; // This should go to the main homepage, not user profile
   };
@@ -54,7 +54,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-      
+
       <nav className="sidebar-nav">
         <NavLink to="/admin" end className="sidebar-item">
           <i className="fas fa-tachometer-alt sidebar-icon"></i>
@@ -81,21 +81,19 @@ const Sidebar = () => {
           Services
         </NavLink>
         <NavLink to="/admin/bookings" className="sidebar-item">
-  <i className="fas fa-calendar-alt sidebar-icon"></i>
-  Bookings
-</NavLink>
-<NavLink to="/admin/approvedbookings" className="sidebar-item">
-  <i className="fas fa-check-circle sidebar-icon"></i>
-  Approved Bookings
-</NavLink>
-
-
+          <i className="fas fa-calendar-alt sidebar-icon"></i>
+          Bookings
+        </NavLink>
+        <NavLink to="/admin/approvedbookings" className="sidebar-item">
+          <i className="fas fa-check-circle sidebar-icon"></i>
+          Approved Bookings
+        </NavLink>
+        <NavLink to="/admin/reviews" className="sidebar-item">
+          <i className="fas fa-star sidebar-icon"></i>
+          Reviews
+        </NavLink>
       </nav>
-      <NavLink to="/admin/reviews" className="sidebar-item">
-  <i className="fas fa-star sidebar-icon"></i>
-  Reviews
-</NavLink>
-      
+
       <div className="sidebar-footer">
         <button className="sidebar-logout" onClick={handleLogout}>
           <i className="fas fa-sign-out-alt sidebar-icon"></i>
