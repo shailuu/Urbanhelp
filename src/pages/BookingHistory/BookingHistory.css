@@ -3,93 +3,166 @@
   display: flex;
   flex-direction: column;
   background-color: #f9faff;
+  font-family: 'Inter', sans-serif; 
+  padding-top: 7%;
 }
 
 .content-wrapper {
   flex: 1;
-  padding: 5rem 1rem;
+  padding: 2rem 1rem; /* Adjusted padding for better responsiveness */
   display: flex;
   justify-content: center;
+  align-items: flex-start; /* Align items to the start for better flow on smaller screens */
 }
 
 .booking-history-container {
   width: 100%;
-  max-width: 800px;
-  padding: 2rem;
+  max-width: 900px; /* Increased max-width slightly for more content space */
+  padding: 2.5rem; /* Increased padding */
   background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(106, 110, 255, 0.15);
-  margin: auto;
+  border-radius: 18px; /* Slightly more rounded corners */
+  box-shadow: 0 8px 30px rgba(106, 110, 255, 0.18); /* Enhanced shadow for more depth */
+  margin: 2rem auto; /* Added vertical margin */
 }
 
 .booking-history-title {
   text-align: center;
   color: #6a6eff;
-  font-size: 2rem;
-  margin-bottom: 2rem;
+  font-size: 2.5rem; /* Larger title font size */
+  font-weight: 700; /* Bolder title */
+  margin-bottom: 2.5rem; /* Increased margin-bottom */
+  letter-spacing: -0.02em; /* Slight letter spacing for aesthetics */
 }
 
 .booking-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  display: grid; /* Changed to grid for better control over columns */
+  grid-template-columns: 1fr; /* Default to single column */
+  gap: 1.8rem; /* Increased gap between cards */
+}
+
+/* Media queries for responsiveness */
+@media (min-width: 640px) { /* Small screens and up */
+  .booking-list {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Two columns on larger screens */
+  }
+}
+
+@media (min-width: 1024px) { /* Large screens and up */
+  .booking-list {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Adjust column size for larger screens if needed */
+  }
 }
 
 .booking-card {
   background-color: #f5f7fb;
-  border-left: 6px solid #6a6eff;
-  border-radius: 10px;
-  padding: 1.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-left: 8px solid #6a6eff; /* Thicker border-left */
+  border-radius: 12px; /* Slightly more rounded corners */
+  padding: 1.8rem; /* Increased padding */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smoother transition */
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Pushes button to bottom */
 }
 
 .booking-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(106, 110, 255, 0.2);
+  transform: translateY(-6px); /* More pronounced lift effect */
+  box-shadow: 0 10px 25px rgba(106, 110, 255, 0.25); /* Stronger shadow on hover */
 }
 
 .booking-card h3 {
   margin-top: 0;
-  font-size: 1.25rem;
+  font-size: 1.4rem; /* Larger heading for service title */
   color: #333;
+  margin-bottom: 0.8rem; /* Space below heading */
 }
 
 .booking-card p {
-  margin: 0.4rem 0;
-  font-size: 1rem;
+  margin: 0.5rem 0; /* Adjusted margin for paragraphs */
+  font-size: 1.05rem; /* Slightly larger text */
   color: #555;
+  line-height: 1.4; /* Improved line height for readability */
 }
 
 .booking-card strong {
   color: #6a6eff;
+  font-weight: 600; /* Slightly bolder strong text */
 }
 
-/* Remove button */
-.remove-button {
-  margin-top: 10px;
-  padding: 6px 12px;
-  background-color: #6a6eff;
+/* Specific styles for status */
+.booking-card p strong:first-child { /* Targets the first strong tag (e.g., "Date:") */
+  color: #555; /* Keep general text color for labels */
+}
+
+.booking-card p:last-of-type strong { /* Targets the strong tag for status */
+  color: #6a6eff; /* Default status color */
+}
+
+/* Status specific colors (if applicable, assuming these classes are applied by JS) */
+.booking-card .status-pending-approval {
+  color: #ffc107; /* Yellow for pending */
+  font-weight: bold;
+}
+
+.booking-card .status-approved {
+  color: #28a745; /* Green for approved */
+  font-weight: bold;
+}
+
+.booking-card .status-cancelled {
+  color: #dc3545; /* Red for cancelled */
+  font-weight: bold;
+}
+
+
+/* Cancel button (renamed from .remove-button for clarity in context) */
+.cancel-button {
+  margin-top: 1.5rem; /* More space above button */
+  padding: 0.8rem 1.5rem; /* Larger padding for button */
+  background-color: #dc3545; /* Red for cancel action */
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px; /* More rounded button */
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 1rem;
-  display: inline-block;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 1.05rem;
+  font-weight: 600;
+  width: 100%; /* Full width button */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.remove-button:hover,
-.remove-button:focus {
-  background-color: #5458d7; /* slightly darker blue for hover */
+.cancel-button:hover,
+.cancel-button:focus {
+  background-color: #c82333; /* Darker red on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
   outline: none;
+}
+
+.cancel-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .empty-state {
   text-align: center;
   color: #888;
-  font-size: 1rem;
-  padding: 1rem 0;
+  font-size: 1.1rem; /* Slightly larger empty state text */
+  padding: 2rem 0; /* More padding */
+  background-color: #f0f0f0; /* Light background for empty state */
+  border-radius: 10px;
+  margin-top: 1.5rem;
+}
+
+/* Section headings */
+section h3 {
+  font-size: 1.75rem; /* Larger section headings */
+  color: #333;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #eee; /* Clearer separator */
 }
 
 /* Footer styles */
@@ -97,8 +170,11 @@
   width: 100%;
   background-color: #6a6eff;
   color: white;
-  padding: 2rem 1rem;
+  padding: 2rem 1.5rem; /* Adjusted padding */
   box-sizing: border-box;
+  border-top-left-radius: 18px; /* Rounded top corners for footer */
+  border-top-right-radius: 18px;
+  box-shadow: 0 -4px 20px rgba(106, 110, 255, 0.15); /* Shadow for footer */
 }
 
 .footer-content {
@@ -106,6 +182,24 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  max-width: 1200px; /* Max width for footer content */
+  margin: 0 auto;
   width: 100%;
-  gap: 1rem;
+  gap: 1.5rem; /* Increased gap */
+}
+
+.footer-content p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: text-decoration 0.2s ease;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
 }

@@ -3,7 +3,7 @@ import {
   getWorkWithUs,
   updateWorkWithUs,
   deleteWorkWithUs,
-  approveWorker
+  approveWorker // This import might not be directly used if you're using fetch, but keeping it for context
 } from '../../Services/api';
 import './Admin.css';
 import './Users.css';
@@ -30,7 +30,9 @@ const WorkWithUs = () => {
     setIsLoading(true);
     try {
       const data = await getWorkWithUs();
-      setApplications(data);
+      // Filter out applications that are 'Approved' before setting state
+      const pendingApplications = data.filter(app => app.status !== 'Approved');
+      setApplications(pendingApplications);
     } catch (error) {
       console.error('Error fetching applications:', error);
     } finally {
@@ -46,9 +48,8 @@ const WorkWithUs = () => {
     try {
       const updatedApplication = applications.find(app => app._id === applicationId);
       await updateWorkWithUs(applicationId, updatedApplication);
-      setApplications(applications.map(app =>
-        app._id === applicationId ? updatedApplication : app
-      ));
+      // Re-fetch applications to ensure the list is up-to-date after saving
+      fetchApplications();
       setEditApplicationId(null);
     } catch (error) {
       console.error('Error updating application:', error);
@@ -57,13 +58,16 @@ const WorkWithUs = () => {
 
   const handleCancel = () => {
     setEditApplicationId(null);
+    // Re-fetch to discard any unsaved local changes
+    fetchApplications();
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this application?')) {
       try {
         await deleteWorkWithUs(id);
-        setApplications(applications.filter(app => app._id !== id));
+        // After deletion, re-fetch applications to get the updated list
+        fetchApplications();
       } catch (error) {
         console.error('Error deleting application:', error);
       }
@@ -84,12 +88,10 @@ const WorkWithUs = () => {
         throw new Error(errorData.message || 'Approval failed');
       }
 
-      // Update the local state to show 'approved'
-      setApplications((prev) =>
-        prev.map((app) =>
-          app._id === id ? { ...app, status: 'Approved' } : app
-        )
-      );
+      // Instead of updating local state, re-fetch all applications.
+      // fetchApplications will then filter out the newly approved one.
+      await fetchApplications();
+      alert('Worker approved successfully.');
     } catch (error) {
       console.error('Error approving application:', error.message);
       alert('Failed to approve worker');
@@ -103,8 +105,16 @@ const WorkWithUs = () => {
     ));
   };
 
+  // Helper to render table cell content
+  const renderCell = (application, column) => {
+    if (column.key === 'createdAt') {
+      return new Date(application[column.key]).toLocaleDateString();
+    }
+    return application[column.key];
+  };
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="loading-state">Loading applications...</div>;
   }
 
   return (
@@ -113,70 +123,77 @@ const WorkWithUs = () => {
         <h1 className="page-title">Work With Us Applications</h1>
       </div>
 
-      <table className="table">
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th key={column.key}>{column.title}</th>
-            ))}
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {applications.map((application) => (
-            <tr key={application._id}>
+      {applications.length === 0 ? (
+        <p className="empty-state">No pending applications found.</p>
+      ) : (
+        <table className="table">
+          <thead>
+            <tr>
               {columns.map((column) => (
-                <td key={column.key}>
+                <th key={column.key}>{column.title}</th>
+              ))}
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {applications.map((application) => (
+              <tr key={application._id}>
+                {columns.map((column) => (
+                  <td key={column.key}>
+                    {editApplicationId === application._id ? (
+                      <input
+                        type="text"
+                        name={column.key}
+                        value={application[column.key]}
+                        onChange={(e) => handleChange(e, application._id)}
+                        className="form-control inline-edit-input"
+                      />
+                    ) : (
+                      renderCell(application, column)
+                    )}
+                  </td>
+                ))}
+                <td>
                   {editApplicationId === application._id ? (
-                    <input
-                      type="text"
-                      name={column.key}
-                      value={application[column.key]}
-                      onChange={(e) => handleChange(e, application._id)}
-                      className="form-control inline-edit-input"
-                    />
+                    <>
+                      <button onClick={() => handleSave(application._id)} className="btn btn-primary btn-sm">Save</button>
+                      <button onClick={handleCancel} className="btn btn-secondary btn-sm ml-2">Cancel</button>
+                    </>
                   ) : (
-                    application[column.key]
+                    <>
+                      <button onClick={() => handleEdit(application._id)} className="btn btn-warning btn-sm">Edit</button>
+                      <button onClick={() => handleDelete(application._id)} className="btn btn-danger btn-sm ml-2">Delete</button>
+                      {application.status !== 'Approved' && ( // Only show approve action if not already approved
+                        <select
+                          defaultValue=""
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "approve") {
+                              handleApprove(application._id);
+                            }
+                          }}
+                          style={{
+                            padding: '5px 10px',
+                            borderRadius: '4px',
+                            backgroundColor: '#f0f0f0',
+                            color: '#333',
+                            border: '1px solid #ccc',
+                            marginLeft: '8px', /* Added margin for spacing */
+                          }}
+                        >
+                          <option value="" disabled>Select Action</option>
+                          <option value="approve" style={{ color: 'green' }}>Approve</option>
+                          
+                        </select>
+                      )}
+                    </>
                   )}
                 </td>
-              ))}
-              <td>
-                {editApplicationId === application._id ? (
-                  <>
-                    <button onClick={() => handleSave(application._id)} className="btn btn-primary btn-sm">Save</button>
-                    <button onClick={handleCancel} className="btn btn-secondary btn-sm ml-2">Cancel</button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => handleEdit(application._id)} className="btn btn-warning btn-sm">Edit</button>
-                    <button onClick={() => handleDelete(application._id)} className="btn btn-danger btn-sm ml-2">Delete</button>
-                    <select
-                      defaultValue=""
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === "approve") {
-                          handleApprove(application._id);
-                        }
-                      }}
-                      style={{
-                        padding: '5px 10px',
-                        borderRadius: '4px',
-                        backgroundColor: '#f0f0f0',
-                        color: '#333',
-                        border: '1px solid #ccc',
-                      }}
-                    >
-                      <option value="" disabled>Select Action</option>
-                      <option value="approve" style={{ color: 'green' }}>Approve</option>
-                      <option value="disapprove" style={{ color: 'red' }}>Disapprove</option>
-                    </select>
-                  </>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

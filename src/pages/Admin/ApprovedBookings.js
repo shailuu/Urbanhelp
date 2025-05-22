@@ -5,7 +5,7 @@ import {
   deleteApprovedBooking,
 } from '../../Services/api';
 import './Admin.css';
-import './Users.css';
+import './Users.css'; // Assuming Users.css contains modal styles if not inline
 
 const ApprovedBookings = () => {
   const [approvedBookings, setApprovedBookings] = useState([]);
@@ -19,10 +19,17 @@ const ApprovedBookings = () => {
     { key: 'approvedWorker.name', title: 'Worker' },
     { key: 'date', title: 'Date', format: (v) => new Date(v).toLocaleDateString() },
     { key: 'time', title: 'Time' },
+    { key: 'status', title: 'Status' },
+    { key: 'isPaid', title: 'Paid', format: (v) => v ? 'Yes' : 'No' }, // Added Paid column
   ];
 
   useEffect(() => {
     fetchData();
+
+    // Polling for updates every minute to catch cancellations and payment status changes
+    const interval = setInterval(fetchData, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const fetchData = async () => {
@@ -42,7 +49,7 @@ const ApprovedBookings = () => {
     if (!window.confirm('Disapprove this booking?')) return;
     try {
       await disapproveBooking(id);
-      setApprovedBookings(prev => prev.filter(b => b._id !== id));
+      fetchData(); // Refresh data instead of filtering
       alert('Booking disapproved');
     } catch (err) {
       console.error(err);
@@ -54,7 +61,7 @@ const ApprovedBookings = () => {
     if (!window.confirm('Delete this booking?')) return;
     try {
       await deleteApprovedBooking(id);
-      setApprovedBookings(prev => prev.filter(b => b._id !== id));
+      fetchData(); // Refresh data
       alert('Booking deleted');
     } catch (err) {
       console.error(err);
@@ -69,46 +76,63 @@ const ApprovedBookings = () => {
     return column.format ? column.format(value) : value || 'N/A';
   };
 
-  // Improved modal styles with text color fixes
+  // Function to determine row style based on status
+  const getRowStyle = (status) => {
+    if (!status) return {};
+
+    status = status.toLowerCase();
+    if (status === 'cancelled') {
+      return { backgroundColor: '#ffeeee', color: '#777' };
+    } else if (status === 'completed') { // Style for completed bookings
+      return { backgroundColor: '#e6ffe6', color: '#333' }; // Light green background
+    }
+    return {};
+  };
+
+  // Replicated Modal Styles from Bookings.js
   const modalOverlayStyle = {
-    position: 'fixed', 
-    top: 0, 
-    left: 0, 
-    right: 0, 
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)', 
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     display: 'flex',
-    justifyContent: 'center', 
-    alignItems: 'center', 
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 1000,
   };
 
   const modalContentStyle = {
-    backgroundColor: '#fff', 
-    padding: 20, 
+    backgroundColor: '#fff',
+    padding: 20,
     borderRadius: 8,
-    width: '90%', 
-    maxWidth: 500, 
-    maxHeight: '80vh', 
+    width: '90%',
+    maxWidth: 500,
+    maxHeight: '80vh',
     overflowY: 'auto',
     boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
   };
 
-  // Added specific styles for modal text
-  const modalTextStyle = {
-    color: '#333',
-    margin: '8px 0',
-    fontSize: '16px',
+  const modalSectionStyle = {
+    marginBottom: '15px',
+    paddingBottom: '10px',
+    borderBottom: '1px solid #eee',
+  };
+
+  const modalRowStyle = {
+    display: 'flex',
+    marginBottom: '5px',
   };
 
   const modalLabelStyle = {
     fontWeight: 'bold',
     color: '#333',
+    flexBasis: '30%',
+    minWidth: '100px',
   };
 
   const modalValueStyle = {
-    color: '#0056b3', // Blue color for values
+    color: '#0056b3',
     fontWeight: 'normal',
+    flexBasis: '70%',
   };
 
   const modalHeadingStyle = {
@@ -118,123 +142,217 @@ const ApprovedBookings = () => {
     marginBottom: '15px',
   };
 
+  const modalCloseBtnStyle = {
+    marginTop: '20px',
+    padding: '10px 20px',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    display: 'block',
+    width: '100%',
+    textAlign: 'center',
+  };
+
+  const buttonStyle = (bgColor = '#007bff') => ({
+    marginRight: 6,
+    padding: '6px 12px',
+    cursor: 'pointer',
+    borderRadius: 4,
+    backgroundColor: bgColor,
+    color: '#fff',
+    border: 'none',
+    fontSize: '14px',
+  });
+
+
   return (
     <div className="page-container">
       <h2>Approved Bookings</h2>
+      <div className="controls-row">
+        {/* Refresh button, if desired, can be added here */}
+      </div>
+
       {isLoading ? (
         <p>Loading...</p>
       ) : error ? (
-        <p>{error}</p>
+        <p className="error-text">{error}</p>
       ) : (
-        <>
-          <table className="table">
-            <thead>
-              <tr>
-                {columns.map(c => <th key={c.key}>{c.title}</th>)}
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {approvedBookings.map(booking => (
-                <tr key={booking._id}>
-                  {columns.map(c => (
-                    <td key={c.key}>{renderCell(booking, c)}</td>
+        <table className="table">
+          <thead>
+            <tr>
+              {columns.map((col) => (
+                <th key={col.key}>{col.title}</th>
+              ))}
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {approvedBookings.length > 0 ? (
+              approvedBookings.map((booking) => (
+                <tr
+                  key={booking._id}
+                  style={getRowStyle(booking.status)}
+                >
+                  {columns.map((col) => (
+                    <td key={col.key}>
+                      {col.key === 'status' ? (
+                        <span className={`status-${(booking.status || '').toLowerCase()}`}>
+                          {renderCell(booking, col)}
+                        </span>
+                      ) : (
+                        renderCell(booking, col)
+                      )}
+                    </td>
                   ))}
                   <td>
                     <button
-                      className="btn btn-info btn-sm"
                       onClick={() => setSelectedBooking(booking)}
-                      style={{ marginRight: 6 }}
+                      style={buttonStyle('#28a745')}
                     >
                       View Details
                     </button>
-                    <button
-                      className="btn btn-warning btn-sm"
-                      onClick={() => handleDisapprove(booking._id)}
-                      style={{ marginRight: 6 }}
-                    >
-                      Disapprove
-                    </button>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleDelete(booking._id)}
-                    >
-                      Delete
-                    </button>
+
+                    {(!booking.status || booking.status.toLowerCase() !== 'cancelled') && (
+                      <>
+                        <button
+                          className="btn btn-warning btn-sm"
+                          onClick={() => handleDisapprove(booking._id)}
+                          style={buttonStyle('#ffc107')}
+                        >
+                          Disapprove
+                        </button>
+                        {!booking.isPaid && ( // Only show Delete if not paid
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleDelete(booking._id)}
+                            style={buttonStyle('#dc3545')}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </>
+                    )}
+
+                    {booking.status && booking.status.toLowerCase() === 'cancelled' && (
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDelete(booking._id)}
+                        style={buttonStyle('#dc3545')}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length + 1}>No approved bookings found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
 
-          {selectedBooking && (
-  <div className="modal-overlay" onClick={() => setSelectedBooking(null)}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      
-      {/* Service Details */}
-      <div className="modal-section">
-        <h4>Service Details</h4>
-        <div className="modal-row">
-          <div className="modal-label">Service:</div>
-          <div className="modal-value">{selectedBooking.service?.title || 'N/A'}</div>
-        </div>
-        <div className="modal-row">
-          <div className="modal-label">Duration:</div>
-          <div className="modal-value">{selectedBooking.duration || 'N/A'}</div>
-        </div>
-        <div className="modal-row">
-          <div className="modal-label">Price:</div>
-          <div className="modal-value">Rs. {selectedBooking.charge || '0'}</div>
-        </div>
-      </div>
+      {/* Booking Details Modal - Updated to match Bookings.js */}
+      {selectedBooking && (
+        <div style={modalOverlayStyle} onClick={() => setSelectedBooking(null)}>
+          <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+            <h4 style={modalHeadingStyle}>Booking Details</h4>
 
-      {/* Your Information */}
-      <div className="modal-section">
-        <h4>Your Information</h4>
-        <div className="modal-row">
-          <div className="modal-label">Name:</div>
-          <div className="modal-value">{selectedBooking.clientInfo?.clientName || 'N/A'}</div>
-        </div>
-        <div className="modal-row">
-          <div className="modal-label">Email:</div>
-          <div className="modal-value">{selectedBooking.clientInfo?.email || 'N/A'}</div>
-        </div>
-        <div className="modal-row">
-          <div className="modal-label">Phone:</div>
-          <div className="modal-value">{selectedBooking.clientInfo?.phone || 'N/A'}</div>
-        </div>
-        <div className="modal-row">
-          <div className="modal-label">Location:</div>
-          <div className="modal-value">{selectedBooking.clientInfo?.location || 'N/A'}</div>
-        </div>
-        <div className="modal-row">
-          <div className="modal-label">Address:</div>
-          <div className="modal-value">{selectedBooking.clientInfo?.address || 'N/A'}</div>
-        </div>
-      </div>
+            {/* Service Details */}
+            <div style={modalSectionStyle}>
+              <h4>Service Details</h4>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Service:</div>
+                <div style={modalValueStyle}>{selectedBooking.service?.title || 'N/A'}</div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Duration:</div>
+                <div style={modalValueStyle}>{selectedBooking.duration || 'N/A'}</div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Price:</div>
+                <div style={modalValueStyle}>Rs. {selectedBooking.charge ? selectedBooking.charge.toFixed(2) : '0'}</div>
+              </div>
+            </div>
 
-      {/* Appointment Details */}
-      <div className="modal-section">
-        <h4>Appointment Details</h4>
-        <div className="modal-row">
-          <div className="modal-label">Date:</div>
-          <div className="modal-value">{new Date(selectedBooking.date).toLocaleDateString(undefined, {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-          })}</div>
-        </div>
-        <div className="modal-row">
-          <div className="modal-label">Time:</div>
-          <div className="modal-value">{selectedBooking.time || 'N/A'}</div>
-        </div>
-      </div>
+            {/* Client Information */}
+            <div style={modalSectionStyle}>
+              <h4>Client Information</h4>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Name:</div>
+                <div style={modalValueStyle}>{selectedBooking.clientInfo?.clientName || 'N/A'}</div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Email:</div>
+                <div style={modalValueStyle}>{selectedBooking.clientInfo?.email || 'N/A'}</div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Phone:</div>
+                <div style={modalValueStyle}>{selectedBooking.clientInfo?.phone || 'N/A'}</div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Location:</div>
+                <div style={modalValueStyle}>{selectedBooking.clientInfo?.location || 'N/A'}</div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Address:</div>
+                <div style={modalValueStyle}>{selectedBooking.clientInfo?.address || 'N/A'}</div>
+              </div>
+            </div>
 
-      <button className="modal-close-btn" onClick={() => setSelectedBooking(null)}>
-        Close
-      </button>
-    </div>
-  </div>
-)}
-        </>
+            {/* Worker and Appointment Details */}
+            <div style={modalSectionStyle}>
+              <h4>Worker & Appointment Details</h4>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Worker:</div>
+                <div style={modalValueStyle}>{selectedBooking.approvedWorker?.name || 'N/A'}</div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Date:</div>
+                <div style={modalValueStyle}>{new Date(selectedBooking.date).toLocaleDateString(undefined, {
+                  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                })}</div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Time:</div>
+                <div style={modalValueStyle}>{selectedBooking.time || 'N/A'}</div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Status:</div>
+                <div style={modalValueStyle}>
+                  <span className={`status-${(selectedBooking.status || '').toLowerCase()}`}>
+                    {selectedBooking.status || 'N/A'}
+                  </span>
+                </div>
+              </div>
+              <div style={modalRowStyle}>
+                <div style={modalLabelStyle}>Paid:</div>
+                <div style={modalValueStyle}>
+                  {selectedBooking.isPaid ? 'Yes' : 'No'}
+                </div>
+              </div>
+            </div>
+
+            {selectedBooking.status && selectedBooking.status.toLowerCase() === 'cancelled' && (
+              <p className="cancelled-notice" style={{ color: '#dc3545', fontWeight: 'bold', textAlign: 'center', marginTop: '15px' }}>
+                This booking was cancelled by the client.
+              </p>
+            )}
+
+            <button
+              className="modal-close-btn"
+              onClick={() => setSelectedBooking(null)}
+              style={modalCloseBtnStyle}
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

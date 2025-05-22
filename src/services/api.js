@@ -238,6 +238,7 @@ export const updateBooking = async (id, bookingData) => {
     throw error.response?.data || { message: 'Error updating booking' };
   }
 };
+
 // Approved Bookings
 export const deleteApprovedBooking = async (id) => {
   try {
@@ -245,6 +246,28 @@ export const deleteApprovedBooking = async (id) => {
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error deleting approved booking' };
+  }
+};
+
+// User Booking History and Cancellation
+export const getUserBookingHistory = async () => {
+  try {
+    const response = await apiClient.get('/bookings/history/user');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching booking history:', error);
+    throw error.response?.data || { message: 'Error fetching booking history' };
+  }
+};
+
+export const cancelBooking = async (bookingId) => {
+  try {
+    // Use PATCH and the correct endpoint
+    const response = await apiClient.patch(`/bookings/${bookingId}/cancel`);
+    return response.data;
+  } catch (error) {
+    console.error('Error cancelling booking:', error);
+    throw error.response?.data || { message: 'Error cancelling booking' };
   }
 };
 

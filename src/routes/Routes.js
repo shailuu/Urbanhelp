@@ -14,6 +14,7 @@ import Bookings from "../pages/Bookings/Bookings";
 import Error from "../pages/Error/Error";
 import ServiceDetail from "../pages/Services/ServiceDetail";
 import BookingHistory from "../pages/BookingHistory/BookingHistory";
+import PaymentStatusPage from "../Components/Popups/PaymentStatusPage"; 
 //import Notifications from "../Components/Notifications";
 
 // Admin Panel
@@ -57,6 +58,7 @@ function AppRoutes() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/services/:id" element={<ServiceDetail />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/payment-status" element={<PaymentStatusPage />} />
         <Route path="/booking/:id" element={<Bookings />} />
         <Route path="/booking-history"
   element={
