@@ -1,3 +1,4 @@
+// pages/Admin/Dashboard.js
 import React, { useState, useEffect } from 'react';
 import {
   getUsers,
@@ -8,8 +9,7 @@ import {
   getAllBookings,
   getApprovedBookings,
 } from '../../Services/api';
-import "./Admin.css";
-import Sidebar from '../../Components/Admin/Sidebar';
+import './Admin.css'; 
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -27,7 +27,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Fetch all required data in parallel
         const [
           users,
           contacts,
@@ -46,7 +45,6 @@ const Dashboard = () => {
           getApprovedBookings(),
         ]);
 
-        // Update stats state with fetched data
         setStats({
           users: users.length,
           contacts: contacts.length,
@@ -76,75 +74,68 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="app-container">
-      <Sidebar />
-      <div className="main-content">
-        <div className="dashboard-header">
-          <h1 className="dashboard-title">Dashboard Overview</h1>
-          <p className="dashboard-subtitle">Welcome to your admin dashboard</p>
+    // REMOVED: <div className="app-container"> and <Sidebar /> and <div className="main-content">
+    // The Layout component will provide the app-container and main-content wrappers
+    <div className="page-container"> {/* This will apply the page container styling */}
+      <div className="page-header"> {/* This will style the header section */}
+        <h1 className="page-title">Dashboard Overview</h1> {/* Uses the page-title style */}
+        <p className="dashboard-subtitle">Welcome to your admin dashboard</p>
+      </div>
+
+      <div className="stats-grid"> {/* This is a new class for the dashboard grid */}
+        <div className="stat-card users">
+          <div className="stat-icon">👥</div>
+          <div className="stat-info">
+            <h3 className="stat-value">{stats.users}</h3>
+            <p className="stat-label">Total Users</p>
+          </div>
         </div>
 
-        <div className="stats-container">
-          <div className="stats-row">
-            <div className="stat-card users">
-              <div className="stat-icon">👥</div>
-              <div className="stat-info">
-                <h3 className="stat-value">{stats.users}</h3>
-                <p className="stat-label">Total Users</p>
-              </div>
-            </div>
-
-            <div className="stat-card contacts">
-              <div className="stat-icon">✉️</div>
-              <div className="stat-info">
-                <h3 className="stat-value">{stats.contacts}</h3>
-                <p className="stat-label">Contact Requests</p>
-              </div>
-            </div>
-
-            <div className="stat-card applications">
-              <div className="stat-icon">📝</div>
-              <div className="stat-info">
-                <h3 className="stat-value">{stats.workWithUs}</h3>
-                <p className="stat-label">Work Applications</p>
-              </div>
-            </div>
+        <div className="stat-card contacts">
+          <div className="stat-icon">✉️</div>
+          <div className="stat-info">
+            <h3 className="stat-value">{stats.contacts}</h3>
+            <p className="stat-label">Contact Requests</p>
           </div>
+        </div>
 
-          <div className="stats-row">
-            <div className="stat-card services">
-              <div className="stat-icon">🛠️</div>
-              <div className="stat-info">
-                <h3 className="stat-value">{stats.services}</h3>
-                <p className="stat-label">Total Services</p>
-              </div>
-            </div>
-
-            <div className="stat-card workers">
-              <div className="stat-icon">👷</div>
-              <div className="stat-info">
-                <h3 className="stat-value">{stats.approvedWorkers}</h3>
-                <p className="stat-label">Approved Workers</p>
-              </div>
-            </div>
+        <div className="stat-card applications">
+          <div className="stat-icon">📝</div>
+          <div className="stat-info">
+            <h3 className="stat-value">{stats.workWithUs}</h3>
+            <p className="stat-label">Work Applications</p>
           </div>
+        </div>
 
-          <div className="stats-row">
-            <div className="stat-card bookings">
-              <div className="stat-icon">📅</div>
-              <div className="stat-info">
-                <h3 className="stat-value">{stats.bookings}</h3>
-                <p className="stat-label">Total Bookings</p>
-              </div>
-            </div>
+        <div className="stat-card services">
+          <div className="stat-icon">🛠️</div>
+          <div className="stat-info">
+            <h3 className="stat-value">{stats.services}</h3>
+            <p className="stat-label">Total Services</p>
+          </div>
+        </div>
 
-            <div className="stat-card approved">
-              <div className="stat-icon">✅</div>
-              <div className="stat-info">
-                <h3 className="stat-value">{stats.approvedBookings}</h3>
-                <p className="stat-label">Approved Bookings</p>
-              </div>
-            </div>
+        <div className="stat-card workers">
+          <div className="stat-icon">👷</div>
+          <div className="stat-info">
+            <h3 className="stat-value">{stats.approvedWorkers}</h3>
+            <p className="stat-label">Approved Workers</p>
+          </div>
+        </div>
+
+        <div className="stat-card bookings">
+          <div className="stat-icon">📅</div>
+          <div className="stat-info">
+            <h3 className="stat-value">{stats.bookings}</h3>
+            <p className="stat-label">Total Bookings</p>
+          </div>
+        </div>
+
+        <div className="stat-card approved">
+          <div className="stat-icon">✅</div>
+          <div className="stat-info">
+            <h3 className="stat-value">{stats.approvedBookings}</h3>
+            <p className="stat-label">Approved Bookings</p>
           </div>
         </div>
       </div>

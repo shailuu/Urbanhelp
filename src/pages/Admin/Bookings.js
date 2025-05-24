@@ -7,7 +7,7 @@ import {
   getApprovedWorkers,
 } from '../../Services/api';
 import './Admin.css';
-import './Users.css';
+//import './Users.css';
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);

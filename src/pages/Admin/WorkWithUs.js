@@ -6,7 +6,7 @@ import {
   approveWorker // This import might not be directly used if you're using fetch, but keeping it for context
 } from '../../Services/api';
 import './Admin.css';
-import './Users.css';
+
 
 const WorkWithUs = () => {
   const [applications, setApplications] = useState([]);

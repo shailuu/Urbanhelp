@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAllReviews, deleteReview } from '../../Services/api';
 import DataTable from '../../Components/Admin/Datatable';
 import "./Admin.css";
-import "./Users.css"; 
+//import "./Users.css"; 
 
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);

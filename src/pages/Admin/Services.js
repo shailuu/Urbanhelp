@@ -6,7 +6,7 @@ import {
   deleteService
 } from '../../Services/api';
 import './Admin.css';
-import './Users.css'; // Reusing styles
+//import './Users.css'; // Reusing styles
 
 const Services = () => {
   const [services, setServices] = useState([]);

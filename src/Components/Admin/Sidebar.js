@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import './Layout.css'; // Import the layout-specific styles
+
 
 const Sidebar = () => {
   const [userName, setUserName] = useState('');

@@ -32,7 +32,7 @@ function ContactUs() {
     }
   
     try {
-      const response = await fetch('http://localhost:5001/api/form/contact', { // Correct URL
+      const response = await fetch('http://localhost:5001/api/form/contact', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -239,6 +239,15 @@ export const updateBooking = async (id, bookingData) => {
   }
 };
 
+export const updateBookingPaymentStatus = async (id, isPaid) => {
+  try {
+    const response = await apiClient.put(`/admin/approved-bookings/${id}/payment-status`, { isPaid }); // <-- UPDATED LINE
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error updating payment status' };
+  }
+};
+
 // Approved Bookings
 export const deleteApprovedBooking = async (id) => {
   try {

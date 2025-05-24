@@ -1,5 +1,6 @@
 import React from 'react';
 import Sidebar from './Sidebar';
+import '../../pages/Admin/Admin.css';
 
 const Layout = ({ children }) => {
   return (

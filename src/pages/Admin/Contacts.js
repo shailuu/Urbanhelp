@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getContacts, updateContact, deleteContact, createContact } from '../../Services/api'; // Add createContact if not already
 import DataTable from '../../Components/Admin/Datatable';
 import './Admin.css';
-import './Users.css';
+//import './Users.css';
 
 
 const Contacts = () => {

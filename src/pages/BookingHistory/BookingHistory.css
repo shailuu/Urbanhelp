@@ -188,18 +188,6 @@ section h3 {
   gap: 1.5rem; /* Increased gap */
 }
 
-.footer-content p {
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-.footer-content a {
-  color: white;
-  text-decoration: none;
-  font-size: 0.95rem;
-  transition: text-decoration 0.2s ease;
-}
-
-.footer-content a:hover {
-  text-decoration: underline;
+footer p {
+margin: 0;
 }

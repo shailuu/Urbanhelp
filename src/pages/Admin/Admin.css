@@ -1,280 +1,931 @@
+/* admin.css */
+
 /* Global Reset */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
+/* General Body and Root Styles */
 body {
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  background-color: #f8f9fa;
-  color: #343a40;
-  line-height: 1.6;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f5f5; /* Light background for the admin area */
+    color: #333;
+    overflow-x: hidden; /* Prevent horizontal scroll on small screens */
 }
 
-/* App Layout */
-.app-container {
-  display: flex;
-  min-height: 100vh;
+/* --- Layout Structure --- */
+.layout-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Component */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 250px; /* Fixed width as per provided CSS */
+    height: 100vh;
+    background-color: #2c3e50; /* Dark blue-grey */
+    color: #ecf0f1; /* Light text color */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Fixed position */
+    left: 0;
+    top: 0;
+    z-index: 1000; /* Ensure sidebar is on top */
+}
+
+.sidebar-top {
+    padding: 20px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #3498db; /* Blue accent */
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #3498db;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 15px 0;
+    overflow-y: auto; /* Allow scrolling for many menu items */
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: #3498db;
+}
+
+.sidebar-item.active {
+    background-color: rgba(52, 152, 219, 0.2);
+    border-left-color: #3498db;
+    font-weight: bold;
+}
+
+.sidebar-icon {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-footer {
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+}
+
+.sidebar-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    background-color: #e74c3c; /* Red for logout */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-logout:hover {
+    background-color: #c0392b;
 }
 
 /* Main Content Area */
 .main-content {
-  flex: 1;
-  margin-left: 250px;
-  padding: 30px;
-  background-color: #f8f9fa;
+    flex-grow: 1; /* Take remaining space */
+    margin-left: 250px; /* Offset for fixed sidebar */
+    padding: 20px; /* Padding for the content within */
+    background-color: #f5f5f5; /* Light background for content area */
+}
+
+/* Page Containers and Headers */
+.page-container {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px; /* Space between different page containers if stacked */
+    min-height: calc(100vh - 40px); /* Fill most of the viewport height */
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.page-title {
+    font-size: 2em;
+    color: #2c3e50;
+    margin: 0;
 }
 
 /* Loading State */
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  gap: 15px;
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    font-size: 1.2em;
+    color: #555;
 }
 
-.loading-spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  border-top: 4px solid #3498db;
-  width: 40px;
-  height: 40px;
+/* Error Messages */
+.error-text {
+    color: #dc3545;
+    font-weight: bold;
+    margin-top: 15px;
 }
 
-/* Dashboard Header */
-.dashboard-header {
-  margin-bottom: 30px;
-  border-bottom: 1px solid #e9ecef;
-  padding-bottom: 20px;
-}
-
-.dashboard-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #212529;
-  margin-bottom: 8px;
-}
-
-.dashboard-subtitle {
-  color: #6c757d;
-  font-size: 16px;
-}
-
-/* Stats Container */
-.stats-container {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-
-.stats-row {
-  display: flex;
-  gap: 25px;
-  flex-wrap: wrap;
-}
-
-/* Stat Cards */
-.stat-card {
-  background-color: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  flex: 1;
-  min-width: 220px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  transition: box-shadow 0.2s ease;
-}
-
-.stat-card:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon {
-  font-size: 24px;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background-color: #f8f9fa;
-}
-
-.users .stat-icon {
-  background-color: #e3f2fd;
-  color: #2196f3;
-}
-
-.contacts .stat-icon {
-  background-color: #e8f5e9;
-  color: #4caf50;
-}
-
-.applications .stat-icon {
-  background-color: #fff8e1;
-  color: #ffc107;
-}
-
-.services .stat-icon {
-  background-color: #f3e5f5;
-  color: #9c27b0;
-}
-
-.workers .stat-icon {
-  background-color: #e8eaf6;
-  color: #3f51b5;
-}
-
-.bookings .stat-icon {
-  background-color: #fce4ec;
-  color: #e91e63;
-}
-
-.approved .stat-icon {
-  background-color: #e0f2f1;
-  color: #009688;
-}
-
-.stat-info {
-  flex: 1;
-}
-
-.stat-value {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 5px;
-  color: #212529;
-}
-
-.stat-label {
-  color: #6c757d;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-/* Sidebar - existing styles */
-.sidebar {
-  width: 250px;
-  background-color: #1e293b;
-  color: white;
-  padding: 20px 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar-header {
-  padding: 0 20px 20px;
-  font-size: 22px;
-  font-weight: bold;
-  border-bottom: 1px solid #334155;
-  margin-bottom: 20px;
-}
-
-/* Media Queries for Responsiveness */
-@media (max-width: 1024px) {
-  .main-content {
-    margin-left: 0;
-    padding: 20px;
-  }
-  
-  .sidebar {
-    width: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-  
-  /* Add mobile menu toggle button styles if needed */
-}
-
-@media (max-width: 768px) {
-  .stats-row {
-    flex-direction: column;
-  }
-  
-  .stat-card {
+/* Tables (from DataTable component) */
+.data-table,
+.table { /* Applying styles to both explicit .data-table and generic .table as seen in Bookings */
     width: 100%;
-  }
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    border-radius: 8px; /* Rounded corners for the table itself */
+    overflow: hidden; /* Ensures rounded corners apply to content */
 }
 
+.data-table th,
+.table th {
+    background-color: #007bff; /* Primary color for headers */
+    color: #ffffff;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table td,
+.table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eceff1;
+    color: #555;
+    font-size: 0.9em;
+    vertical-align: middle; /* Align content vertically in the middle */
+}
+
+.data-table tr:hover,
+.table tr:not(:first-child):hover { /* Exclude header row from hover effect */
+    background-color: #f8f9fa; /* Lighter hover effect */
+}
+
+.data-table tbody tr:last-child td,
+.table tbody tr:last-child td {
+    border-bottom: none; /* No border for the last row */
+}
+
+/* Table specific cell content */
+.data-table td img,
+.table td img {
+    width: 70px; /* Smaller image size for table display */
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+/* Inline Edit Inputs within Tables */
+.inline-edit-input {
+    width: calc(100% - 10px); /* Adjust width to fit well in table cell */
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9em;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inline-edit-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* --- Buttons (General) --- */
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    white-space: nowrap; /* Prevent text wrap on small buttons */
+    /* margin-right: 8px; REMOVED: Managed by gap in action-buttons container */
+}
+
+/* REMOVED: Specific margin for last child as gap handles it */
+/* .btn:last-child {
+    margin-right: 0;
+} */
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Primary Buttons */
+.btn-primary,
+.btn-create-user,
+.btn-success {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn-primary:hover,
+.btn-create-user:hover,
+.btn-success:hover {
+    background-color: #0056b3;
+}
+
+/* Warning/Edit Buttons */
+.btn-warning,
+.btn-edit {
+    background-color: #ffc107;
+    color: #212529; /* Darker text for better contrast */
+}
+
+.btn-warning:hover,
+.btn-edit:hover {
+    background-color: #e0a800;
+}
+
+/* Danger/Delete Buttons */
+.btn-danger,
+.btn-delete {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn-danger:hover,
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+/* Secondary Buttons */
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Action Buttons Container (used in DataTable renderActions and ApprovedBookings) */
+.action-buttons {
+    display: flex;
+    gap: 8px; /* Space between buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    align-items: center;
+}
+
+/* Specific styling for 'View Details' button in ApprovedBookings */
+/* It uses .view-details-btn class directly, making it consistent with primary style */
+.view-details-btn {
+    /* Inherits general .btn styles, add specific color if different from .btn-primary */
+    background-color: #007bff; /* Explicitly set to primary blue */
+    color: white;
+    /* Add any other specific styles if needed, otherwise general .btn rules apply */
+}
+
+.view-details-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+
+/* --- Forms (Create/Edit) --- */
+.create-form,
+.create-user-form {
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+.create-form h3,
+.create-user-form h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* Specific input types adjustments */
+input[type="file"].form-control {
+    padding-top: 8px; /* Adjust for file input appearance */
+}
+
+/* Image Previews in Forms */
+.image-preview {
+    margin-top: 15px;
+    border: 1px dashed #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    display: inline-block; /* To contain the image well */
+}
+
+.image-preview img {
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: cover;
+    display: block; /* Remove extra space below image */
+}
+
+/* Durations and Pricing (Services component) */
+.durations-container {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #fefefe;
+}
+
+.duration-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.duration-row:last-child {
+    margin-bottom: 0;
+}
+
+.duration-row .form-control {
+    flex: 1;
+    min-width: 0; /* Allow inputs to shrink */
+}
+
+.edit-durations {
+    /* Styles for the container of durations in edit mode */
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.edit-durations .btn-danger {
+    padding: 4px 8px; /* Smaller remove button */
+    font-size: 0.8em;
+}
+
+/* Status Badges/Spans (ApprovedBookings, Reviews) */
+.status-pending {
+    color: #ff8c00; /* Orange */
+    font-weight: bold;
+    padding: 5px 10px; /* Added padding for badge-like appearance */
+    border-radius: 4px;
+    background-color: #fff3cd; /* Light yellow background */
+}
+
+.status-approved,
+.status-active,
+.status-yes { /* For 'Paid' status */
+    color: #28a745; /* Green */
+    font-weight: bold;
+    padding: 5px 10px; /* Added padding for badge-like appearance */
+    border-radius: 4px;
+    background-color: #d4edda; /* Light green background */
+}
+
+.status-rejected,
+.status-cancelled,
+.status-no { /* For 'Not Paid' status */
+    color: #dc3545; /* Red */
+    font-weight: bold;
+    padding: 5px 10px; /* Added padding for badge-like appearance */
+    border-radius: 4px;
+    background-color: #f8d7da; /* Light red background */
+}
+
+.status-completed {
+    color: #007bff; /* Blue */
+    font-weight: bold;
+    padding: 5px 10px; /* Added padding for badge-like appearance */
+    border-radius: 4px;
+    background-color: #d1ecf1; /* Light blue background */
+}
+
+
+/* Row Styling based on Status (ApprovedBookings) */
+/* Moved these into .table context for stronger specificity, although inline styles are harder to override */
+.table tr[style*="background-color: rgb(255, 238, 238)"] { /* cancelled */
+    opacity: 0.8;
+}
+
+.table tr[style*="background-color: rgb(230, 255, 230)"] { /* completed */
+    /* No specific opacity, but could be added if needed */
+}
+
+/* Payment Status Select (ApprovedBookings) - Refined */
+.payment-status-select {
+    padding: 8px 12px; /* Increased padding to match buttons */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 0.9em;
+    cursor: pointer;
+    background-color: #f8f8f8;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.1s ease, box-shadow 0.1s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Added subtle shadow */
+    appearance: none; /* Remove default dropdown arrow */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%204%205%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M2%200L0%202h4zm0%205L0%203h4z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 8px;
+}
+
+.payment-status-select:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.payment-status-select.paid {
+    border-color: #28a745;
+    background-color: #e6ffe6; /* Lighter background for paid */
+    color: #28a745;
+}
+
+.payment-status-select.not-paid {
+    border-color: #dc3545;
+    background-color: #ffe6e6; /* Lighter background for not paid */
+    color: #dc3545;
+}
+
+
+/* Toast/Status Messages (ApprovedBookings) */
+.status-message {
+    position: fixed; /* Added fixed position */
+    bottom: 20px; /* From bottom */
+    right: 20px; /* From right */
+    padding: 15px 25px; /* Increased padding */
+    border-radius: 8px; /* Larger border-radius */
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1em; /* Slightly larger font */
+    text-align: center;
+    z-index: 1050; /* Ensure it's above other elements */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+    animation: fadeInOut 3s forwards; /* Animation added */
+}
+
+.status-message.success {
+    background-color: #28a745; /* Green */
+}
+
+.status-message.error {
+    background-color: #dc3545; /* Red */
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(20px); }
+}
+
+
+/* Modals (General structure for all modals) */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.2s ease-in-out;
-}
-.modal-content {
-  background: #fff;
-  padding: 28px 32px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 540px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  font-family: 'Segoe UI', sans-serif;
-  color: #222;
-  animation: slideUp 0.3s ease-in-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Ensure it's on top of everything */
+    padding: 15px; /* Padding to prevent modal from touching screen edges */
 }
 
-.modal-section {
-  margin-bottom: 24px;
+.modal-content,
+.confirm-modal-content {
+    background-color: #fff;
+    /* Reduced padding, max-width and font-size for a smaller modal */
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%; /* Slightly smaller width */
+    max-width: 500px; /* Reduced max-width */
+    max-height: 80vh; /* Make sure it fits smaller screens */
+    overflow-y: auto; /* Scroll if content overflows */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+    /* Added animation for smoother entry */
+    animation: scaleIn 0.3s ease-out;
+    font-size: 0.95em; /* Slightly smaller font */
 }
 
-.modal-section h4 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 6px;
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
-.modal-row {
-  display: flex;
-  margin: 6px 0;
-}
-
-.modal-label {
-  width: 120px;
-  font-weight: 500;
-  color: #333;
-}
-
-.modal-value {
-  color: #444;
-}
-
+/* Modal close button is now inside the content */
 .modal-close-btn {
-  margin-top: 16px;
-  padding: 10px 18px;
-  border-radius: 6px;
-  background-color: #007bff;
-  color: #fff;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
+    background-color: #6c757d; /* Consistent with secondary button */
+    color: white;
+    padding: 8px 16px; /* Smaller padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em; /* Smaller font-size */
+    margin-top: 20px; /* Reduced margin */
+    display: block; /* Make it block to center with margin auto */
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.2s ease;
 }
 
 .modal-close-btn:hover {
-  background-color: #0056b3;
+    background-color: #5a6268;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+
+/* Modal specific headings and text */
+.modal-heading {
+    /* Reduced font-size and margin for a smaller heading */
+    font-size: 1.6em;
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 20px; /* Reduced margin */
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px; /* Reduced padding */
+    text-align: center;
+}
+
+.modal-section {
+    margin-bottom: 15px; /* Reduced margin */
+    padding: 12px; /* Reduced padding */
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+}
+
+.modal-section h4 {
+    /* Reduced font-size and margin for a smaller heading */
+    color: #007bff;
+    font-size: 1.2em;
+    margin-top: 0;
+    margin-bottom: 12px; /* Reduced margin */
+    border-bottom: 1px dashed #e9ecef;
+    padding-bottom: 6px; /* Reduced padding */
+}
+
+.modal-row {
+    display: flex;
+    align-items: flex-start; /* Align to top if content wraps */
+    margin-bottom: 8px; /* Reduced margin */
+    font-size: 0.9em; /* Slightly smaller font */
+}
+
+.modal-label {
+    font-weight: 600;
+    color: #555;
+    width: 100px; /* Reduced width */
+    flex-shrink: 0; /* Prevent label from shrinking */
+    margin-right: 10px; /* Reduced margin */
+}
+
+.modal-value {
+    color: #333;
+    flex-grow: 1; /* Allow value to take remaining space */
+}
+
+/* For specific styling like "Rs." */
+.modal-value strong {
+    color: #007bff; /* Highlight currency */
+}
+
+.cancelled-notice {
+    color: #721c24; /* Darker red */
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px; /* Reduced margin */
+    padding: 8px 12px; /* Reduced padding */
+    background-color: #f8d7da; /* Light red */
+    border-radius: 5px;
+}
+
+/* Confirmation Modal (from ApprovedBookings) */
+.confirm-modal-content {
+    max-width: 400px; /* Even smaller for confirmation */
+    text-align: center;
+    padding: 20px; /* Reduced padding */
+}
+
+.confirm-modal-content h4 {
+    font-size: 1.4em; /* Slightly smaller */
+    color: #333;
+    margin-bottom: 12px; /* Reduced margin */
+    border-bottom: none; /* No border for confirm modal heading */
+    padding-bottom: 0;
+}
+
+.confirm-modal-content p {
+    text-align: center;
+    margin-bottom: 20px; /* Reduced margin */
+    font-size: 1em; /* Slightly smaller */
+    color: #555;
+}
+
+.confirm-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px; /* Slightly reduced gap */
+    margin-top: 15px; /* Reduced margin */
+}
+
+.confirm-yes {
+    background-color: #28a745; /* Success green */
+    color: white;
+    padding: 8px 20px; /* Reduced padding */
+    border-radius: 6px;
+    font-size: 1em; /* Slightly smaller */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.confirm-yes:hover {
+    background-color: #218838;
+}
+
+.confirm-no {
+    background-color: #dc3545; /* Danger red */
+    color: white; /* Changed text color to white for better contrast */
+    border: none; /* Removed border */
+    padding: 8px 20px; /* Reduced padding */
+    border-radius: 6px;
+    font-size: 1em; /* Slightly smaller */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.confirm-no:hover {
+    background-color: #c82333;
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    /* Sidebar collapse */
+    .sidebar {
+        width: 70px;
+        overflow: hidden; /* Hide text, only show icons */
+    }
+
+    .sidebar-header {
+        font-size: 1rem;
+        margin-bottom: 0; /* Adjust spacing */
+    }
+
+    .user-name {
+        display: none; /* Hide user name */
+    }
+
+    .user-info {
+        justify-content: center; /* Center avatar */
+    }
+
+    .user-avatar {
+        margin-right: 0; /* No margin when name is hidden */
+    }
+
+    .sidebar-item {
+        justify-content: center; /* Center icons */
+        padding: 12px 0; /* Adjust padding */
+        border-left: none; /* No border for small screens */
+    }
+
+    .sidebar-item:hover {
+        border-left-color: transparent; /* No border for small screens */
+    }
+
+    .sidebar-item.active {
+        border-left-color: transparent; /* No border for small screens */
+    }
+
+    .sidebar-item span {
+        display: none; /* Hide text labels */
+    }
+
+    .sidebar-icon {
+        margin-right: 0; /* No margin for icon */
+        font-size: 1.2rem;
+    }
+
+    .sidebar-logout span {
+        display: none; /* Hide logout text */
+    }
+
+    .main-content {
+        margin-left: 70px; /* Adjust offset for collapsed sidebar */
+        padding: 15px;
+    }
+
+    .page-container {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .page-title {
+        font-size: 1.8em;
+    }
+
+    .data-table,
+    .table {
+        font-size: 0.85em;
+    }
+
+    .data-table th,
+    .table th,
+    .data-table td,
+    .table td {
+        padding: 8px 10px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-start;
+    }
+
+    /* Target buttons and selects within action-buttons on small screens */
+    .action-buttons button,
+    .action-buttons select {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    .form-control {
+        padding: 8px 10px;
+    }
+
+    .duration-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .duration-row .form-control {
+        width: 100%;
+    }
+
+    .modal-content,
+    .confirm-modal-content {
+        padding: 20px;
+    }
+
+    .modal-heading {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+
+    .modal-section {
+        padding: 10px;
+    }
+
+    .modal-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+        padding: 5px 0;
+    }
+
+    .modal-label {
+        font-size: 0.95em;
+    }
+
+    .modal-value {
+        font-size: 0.9em;
+        text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.5em;
+    }
+
+    .data-table th,
+    .table th,
+    .data-table td,
+    .table td {
+        font-size: 0.8em;
+    }
+
+    .btn {
+        font-size: 0.85em;
+        padding: 6px 10px;
+    }
+
+    .modal-content,
+    .confirm-modal-content {
+        margin: 10px;
+    }
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
 }

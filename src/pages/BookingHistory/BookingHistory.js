@@ -12,7 +12,7 @@ const BookingHistory = () => {
 
   useEffect(() => {
     fetchBookings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []);
 
   const fetchBookings = async () => {
@@ -23,12 +23,11 @@ const BookingHistory = () => {
 
       // --- START: CRITICAL DEBUGGING LOGS ---
       console.log("--- Raw Bookings Data from Backend (before filtering) ---");
-      console.log(JSON.stringify(allBookings, null, 2));
+      console.log(JSON.stringify(allBookings, null, 2));    
       console.log("-------------------------------------------------------");
       // --- END: CRITICAL DEBUGGING LOGS ---
 
-      // Filter out bookings that have a 'Cancelled' status from the main state
-      // Added .trim() for robustness against leading/trailing spaces in status string
+
       const nonCancelledBookings = allBookings.filter(
         (booking) => booking.status && booking.status.toLowerCase().trim() !== 'cancelled'
       );
@@ -58,7 +57,7 @@ const BookingHistory = () => {
       const idToSend = bookingToCancel._id;
       await cancelBooking(idToSend); // Call the API to cancel
 
-      // Optimistic UI update: Immediately remove the booking from the state
+      
       setBookings(prevBookings =>
         prevBookings.filter(booking => booking._id !== bookingToCancel._id)
       );
@@ -83,8 +82,7 @@ const BookingHistory = () => {
     }
   };
 
-  // Filterings based strictly on the 'status' property returned from the backend
-  // These filters will now work on the 'bookings' state which already excludes 'cancelled' items
+  // Separate bookings into pending and approved based on status
   const pendingBookings = bookings.filter(
     (b) => b.status && b.status.toLowerCase() === 'pending approval'
   );

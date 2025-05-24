@@ -1,17 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import {
   getApprovedBookings,
-  disapproveBooking,
+  updateBookingPaymentStatus, // Correctly imported
   deleteApprovedBooking,
-} from '../../Services/api';
-import './Admin.css';
-import './Users.css'; // Assuming Users.css contains modal styles if not inline
+} from '../../Services/api'; // Ensure this path is correct
+import DataTable from '../../Components/Admin/Datatable';
+import './Admin.css'; // Import styles for this component
+
 
 const ApprovedBookings = () => {
   const [approvedBookings, setApprovedBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
+
+  // State for custom confirmation modal
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [confirmAction, setConfirmAction] = useState(null); // Function to execute on confirm
+
+  // State for status messages (toast-like)
+  const [statusMessage, setStatusMessage] = useState({
+    show: false,
+    type: '', // 'success' or 'error'
+    text: '',
+  });
 
   const columns = [
     { key: 'service.title', title: 'Service' },
@@ -20,17 +33,26 @@ const ApprovedBookings = () => {
     { key: 'date', title: 'Date', format: (v) => new Date(v).toLocaleDateString() },
     { key: 'time', title: 'Time' },
     { key: 'status', title: 'Status' },
-    { key: 'isPaid', title: 'Paid', format: (v) => v ? 'Yes' : 'No' }, // Added Paid column
+    { key: 'isPaid', title: 'Paid', format: (v) => v ? 'Yes' : 'No' },
   ];
 
   useEffect(() => {
     fetchData();
 
-    // Polling for updates every minute to catch cancellations and payment status changes
+    // Polling for updates every minute
     const interval = setInterval(fetchData, 60000);
 
     return () => clearInterval(interval);
   }, []);
+
+  // Function to display status messages
+  const showStatus = (type, text) => {
+    setStatusMessage({ show: true, type, text });
+    const timer = setTimeout(() => {
+      setStatusMessage({ show: false, type: '', text: '' });
+    }, 3000); // Message disappears after 3 seconds
+    return () => clearTimeout(timer);
+  };
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -40,34 +62,53 @@ const ApprovedBookings = () => {
     } catch (err) {
       console.error(err);
       setError('Failed to load approved bookings');
+      showStatus('error', 'Failed to load approved bookings.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDisapprove = async (id) => {
-    if (!window.confirm('Disapprove this booking?')) return;
+  const handlePaymentStatusChange = async (bookingId, isPaidValue) => {
+    const isPaid = isPaidValue === 'paid'; // Convert dropdown value to boolean
     try {
-      await disapproveBooking(id);
-      fetchData(); // Refresh data instead of filtering
-      alert('Booking disapproved');
+      await updateBookingPaymentStatus(bookingId, isPaid);
+      fetchData(); // Refresh data to reflect the change
+      showStatus('success', 'Payment status updated successfully!');
     } catch (err) {
-      console.error(err);
-      alert('Failed to disapprove');
+      console.error('Failed to update payment status:', err);
+      showStatus('error', 'Failed to update payment status. Please try again.');
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this booking?')) return;
-    try {
-      await deleteApprovedBooking(id);
-      fetchData(); // Refresh data
-      alert('Booking deleted');
-    } catch (err) {
-      console.error(err);
-      alert('Delete failed');
+  const handleDeleteClick = (bookingId) => {
+    setConfirmMessage('Are you sure you want to delete this booking? This action cannot be undone.');
+    setConfirmAction(() => async () => {
+      try {
+        await deleteApprovedBooking(bookingId);
+        fetchData(); // Refresh data
+        showStatus('success', 'Booking deleted successfully!');
+      } catch (err) {
+        console.error(err);
+        showStatus('error', 'Failed to delete booking. Please try again.');
+      } finally {
+        setShowConfirmModal(false); // Close modal after action
+      }
+    });
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirm = () => {
+    if (confirmAction) {
+      confirmAction();
     }
   };
+
+  const handleCancelConfirm = () => {
+    setShowConfirmModal(false);
+    setConfirmAction(null);
+    setConfirmMessage('');
+  };
+
 
   const renderCell = (item, column) => {
     const keys = column.key.split('.');
@@ -83,97 +124,25 @@ const ApprovedBookings = () => {
     status = status.toLowerCase();
     if (status === 'cancelled') {
       return { backgroundColor: '#ffeeee', color: '#777' };
-    } else if (status === 'completed') { // Style for completed bookings
-      return { backgroundColor: '#e6ffe6', color: '#333' }; // Light green background
+    } else if (status === 'completed') {
+      return { backgroundColor: '#e6ffe6', color: '#333' };
     }
     return {};
   };
 
-  // Replicated Modal Styles from Bookings.js
-  const modalOverlayStyle = {
-    position: 'fixed',
-    top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  };
-
-  const modalContentStyle = {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 8,
-    width: '90%',
-    maxWidth: 500,
-    maxHeight: '80vh',
-    overflowY: 'auto',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-  };
-
-  const modalSectionStyle = {
-    marginBottom: '15px',
-    paddingBottom: '10px',
-    borderBottom: '1px solid #eee',
-  };
-
-  const modalRowStyle = {
-    display: 'flex',
-    marginBottom: '5px',
-  };
-
-  const modalLabelStyle = {
-    fontWeight: 'bold',
-    color: '#333',
-    flexBasis: '30%',
-    minWidth: '100px',
-  };
-
-  const modalValueStyle = {
-    color: '#0056b3',
-    fontWeight: 'normal',
-    flexBasis: '70%',
-  };
-
-  const modalHeadingStyle = {
-    color: '#222',
-    borderBottom: '1px solid #eee',
-    paddingBottom: '10px',
-    marginBottom: '15px',
-  };
-
-  const modalCloseBtnStyle = {
-    marginTop: '20px',
-    padding: '10px 20px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    display: 'block',
-    width: '100%',
-    textAlign: 'center',
-  };
-
-  const buttonStyle = (bgColor = '#007bff') => ({
-    marginRight: 6,
-    padding: '6px 12px',
-    cursor: 'pointer',
-    borderRadius: 4,
-    backgroundColor: bgColor,
-    color: '#fff',
-    border: 'none',
-    fontSize: '14px',
-  });
-
+  // Removed all inline modal styles and buttonStyle function
+  // They are now handled by ApprovedBookings.css classes
 
   return (
     <div className="page-container">
       <h2>Approved Bookings</h2>
-      <div className="controls-row">
-        {/* Refresh button, if desired, can be added here */}
-      </div>
+
+      {/* Status Message Display */}
+      {statusMessage.show && (
+        <div className={`status-message ${statusMessage.type}`}>
+          {statusMessage.text}
+        </div>
+      )}
 
       {isLoading ? (
         <p>Loading...</p>
@@ -207,40 +176,40 @@ const ApprovedBookings = () => {
                       )}
                     </td>
                   ))}
-                  <td>
+                  <td className="action-buttons">
                     <button
                       onClick={() => setSelectedBooking(booking)}
-                      style={buttonStyle('#28a745')}
+                      className="view-details-btn"
                     >
                       View Details
                     </button>
 
+                    {/* Payment Status Dropdown */}
+                    <select
+                      value={booking.isPaid ? 'paid' : 'notPaid'}
+                      onChange={(e) => handlePaymentStatusChange(booking._id, e.target.value)}
+                      className={`payment-status-select ${booking.isPaid ? 'paid' : 'not-paid'}`}
+                    >
+                      <option value="paid">Paid</option>
+                      <option value="notPaid">Not Paid</option>
+                    </select>
+
+                    {/* Delete button (remains under certain conditions) */}
                     {(!booking.status || booking.status.toLowerCase() !== 'cancelled') && (
-                      <>
+                      !booking.isPaid && ( // Only show Delete if not paid
                         <button
-                          className="btn btn-warning btn-sm"
-                          onClick={() => handleDisapprove(booking._id)}
-                          style={buttonStyle('#ffc107')}
+                          className="delete-btn"
+                          onClick={() => handleDeleteClick(booking._id)}
                         >
-                          Disapprove
+                          Delete
                         </button>
-                        {!booking.isPaid && ( // Only show Delete if not paid
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleDelete(booking._id)}
-                            style={buttonStyle('#dc3545')}
-                          >
-                            Delete
-                          </button>
-                        )}
-                      </>
+                      )
                     )}
 
                     {booking.status && booking.status.toLowerCase() === 'cancelled' && (
                       <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => handleDelete(booking._id)}
-                        style={buttonStyle('#dc3545')}
+                        className="delete-btn"
+                        onClick={() => handleDeleteClick(booking._id)}
                       >
                         Delete
                       </button>
@@ -257,89 +226,89 @@ const ApprovedBookings = () => {
         </table>
       )}
 
-      {/* Booking Details Modal - Updated to match Bookings.js */}
+      {/* Booking Details Modal */}
       {selectedBooking && (
-        <div style={modalOverlayStyle} onClick={() => setSelectedBooking(null)}>
-          <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-            <h4 style={modalHeadingStyle}>Booking Details</h4>
+        <div className="modal-overlay" onClick={() => setSelectedBooking(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h4 className="modal-heading">Booking Details</h4>
 
             {/* Service Details */}
-            <div style={modalSectionStyle}>
+            <div className="modal-section">
               <h4>Service Details</h4>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Service:</div>
-                <div style={modalValueStyle}>{selectedBooking.service?.title || 'N/A'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Service:</div>
+                <div className="modal-value">{selectedBooking.service?.title || 'N/A'}</div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Duration:</div>
-                <div style={modalValueStyle}>{selectedBooking.duration || 'N/A'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Duration:</div>
+                <div className="modal-value">{selectedBooking.duration || 'N/A'}</div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Price:</div>
-                <div style={modalValueStyle}>Rs. {selectedBooking.charge ? selectedBooking.charge.toFixed(2) : '0'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Price:</div>
+                <div className="modal-value">Rs. {selectedBooking.charge ? selectedBooking.charge.toFixed(2) : '0'}</div>
               </div>
             </div>
 
             {/* Client Information */}
-            <div style={modalSectionStyle}>
+            <div className="modal-section">
               <h4>Client Information</h4>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Name:</div>
-                <div style={modalValueStyle}>{selectedBooking.clientInfo?.clientName || 'N/A'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Name:</div>
+                <div className="modal-value">{selectedBooking.clientInfo?.clientName || 'N/A'}</div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Email:</div>
-                <div style={modalValueStyle}>{selectedBooking.clientInfo?.email || 'N/A'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Email:</div>
+                <div className="modal-value">{selectedBooking.clientInfo?.email || 'N/A'}</div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Phone:</div>
-                <div style={modalValueStyle}>{selectedBooking.clientInfo?.phone || 'N/A'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Phone:</div>
+                <div className="modal-value">{selectedBooking.clientInfo?.phone || 'N/A'}</div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Location:</div>
-                <div style={modalValueStyle}>{selectedBooking.clientInfo?.location || 'N/A'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Location:</div>
+                <div className="modal-value">{selectedBooking.clientInfo?.location || 'N/A'}</div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Address:</div>
-                <div style={modalValueStyle}>{selectedBooking.clientInfo?.address || 'N/A'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Address:</div>
+                <div className="modal-value">{selectedBooking.clientInfo?.address || 'N/A'}</div>
               </div>
             </div>
 
             {/* Worker and Appointment Details */}
-            <div style={modalSectionStyle}>
+            <div className="modal-section">
               <h4>Worker & Appointment Details</h4>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Worker:</div>
-                <div style={modalValueStyle}>{selectedBooking.approvedWorker?.name || 'N/A'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Worker:</div>
+                <div className="modal-value">{selectedBooking.approvedWorker?.name || 'N/A'}</div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Date:</div>
-                <div style={modalValueStyle}>{new Date(selectedBooking.date).toLocaleDateString(undefined, {
+              <div className="modal-row">
+                <div className="modal-label">Date:</div>
+                <div className="modal-value">{new Date(selectedBooking.date).toLocaleDateString(undefined, {
                   weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
                 })}</div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Time:</div>
-                <div style={modalValueStyle}>{selectedBooking.time || 'N/A'}</div>
+              <div className="modal-row">
+                <div className="modal-label">Time:</div>
+                <div className="modal-value">{selectedBooking.time || 'N/A'}</div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Status:</div>
-                <div style={modalValueStyle}>
+              <div className="modal-row">
+                <div className="modal-label">Status:</div>
+                <div className="modal-value">
                   <span className={`status-${(selectedBooking.status || '').toLowerCase()}`}>
                     {selectedBooking.status || 'N/A'}
                   </span>
                 </div>
               </div>
-              <div style={modalRowStyle}>
-                <div style={modalLabelStyle}>Paid:</div>
-                <div style={modalValueStyle}>
+              <div className="modal-row">
+                <div className="modal-label">Paid:</div>
+                <div className="modal-value">
                   {selectedBooking.isPaid ? 'Yes' : 'No'}
                 </div>
               </div>
             </div>
 
             {selectedBooking.status && selectedBooking.status.toLowerCase() === 'cancelled' && (
-              <p className="cancelled-notice" style={{ color: '#dc3545', fontWeight: 'bold', textAlign: 'center', marginTop: '15px' }}>
+              <p className="cancelled-notice">
                 This booking was cancelled by the client.
               </p>
             )}
@@ -347,10 +316,23 @@ const ApprovedBookings = () => {
             <button
               className="modal-close-btn"
               onClick={() => setSelectedBooking(null)}
-              style={modalCloseBtnStyle}
             >
               Close
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="modal-overlay" onClick={handleCancelConfirm}>
+          <div className="confirm-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h4>Confirm Action</h4>
+            <p>{confirmMessage}</p>
+            <div className="confirm-modal-actions">
+              <button className="confirm-yes" onClick={handleConfirm}>Yes</button>
+              <button className="confirm-no" onClick={handleCancelConfirm}>No</button>
+            </div>
           </div>
         </div>
       )}

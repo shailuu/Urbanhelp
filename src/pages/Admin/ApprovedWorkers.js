@@ -7,7 +7,7 @@ import {
 } from '../../Services/api';
 import DataTable from '../../Components/Admin/Datatable';
 import "./Admin.css";
-import "./Users.css";
+//import "./Users.css";
 
 const ApprovedWorkers = () => {
   const [workers, setWorkers] = useState([]);
